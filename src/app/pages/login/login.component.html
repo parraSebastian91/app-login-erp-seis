@@ -1,0 +1,35 @@
+<div class="full-window">
+    <div class="login-container">
+        <mat-card class="login-card">
+            <form [formGroup]="loginForm" (ngSubmit)="login()">
+                <mat-card-content>
+                    <div class="form-container">
+                        <div class="input">
+                            <mat-form-field class="full-width">
+                                <mat-label>Usuario</mat-label>
+                                <input matInput formControlName="username" type="text" placeholder="Ingrese su usuario"
+                                    required>
+                                <mat-error *ngIf="loginForm.get('username')?.hasError('required')">
+                                    El usuario es requerido
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div class="input">
+                            <mat-form-field class="full-width">
+                                <mat-label>Contraseña</mat-label>
+                                <input matInput formControlName="password" type="password"
+                                    placeholder="Ingrese su contraseña" required>
+                                <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
+                                    La contraseña es requerida
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                </mat-card-content>
+            </form>
+        </mat-card>
+
+
+
+    </div>
+</div>
