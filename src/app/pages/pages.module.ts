@@ -26,7 +26,7 @@ import { ReactiveFormsModule } from '@angular/forms';
     MatError,
     CommonModule,
     PagesRoutingModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
   ]
 })
 export class PagesModule { }

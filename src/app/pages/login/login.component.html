@@ -1,35 +1,58 @@
 <div class="full-window">
     <div class="login-container">
-        <mat-card class="login-card">
-            <form [formGroup]="loginForm" (ngSubmit)="login()">
-                <mat-card-content>
-                    <div class="form-container">
-                        <div class="input">
-                            <mat-form-field class="full-width">
-                                <mat-label>Usuario</mat-label>
-                                <input matInput formControlName="username" type="text" placeholder="Ingrese su usuario"
-                                    required>
-                                <mat-error *ngIf="loginForm.get('username')?.hasError('required')">
-                                    El usuario es requerido
-                                </mat-error>
-                            </mat-form-field>
-                        </div>
-                        <div class="input">
-                            <mat-form-field class="full-width">
-                                <mat-label>Contraseña</mat-label>
-                                <input matInput formControlName="password" type="password"
-                                    placeholder="Ingrese su contraseña" required>
-                                <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
-                                    La contraseña es requerida
-                                </mat-error>
-                            </mat-form-field>
-                        </div>
-                    </div>
-                </mat-card-content>
-            </form>
-        </mat-card>
 
 
+        <div class="item login">
+            <mat-card class="login-card">
+                <form [formGroup]="loginForm" (ngSubmit)="login()">
+                    <mat-card-content>
+
+                        <mat-card>
+                            <mat-card-header>
+                                <div mat-card-avatar class="example-header-image"></div>
+                                <mat-card-title>Login</mat-card-title>
+                                <mat-card-subtitle>Ingrese sus credenciales para ingresar al sistema</mat-card-subtitle>
+                            </mat-card-header>
+                            <mat-card-content>
+                                <div class="form-container">
+
+                                    <div class="input flex-center">
+                                        <mat-form-field class="med-width">
+                                            <mat-label>Usuario</mat-label>
+                                            <input matInput formControlName="username" type="text"
+                                                placeholder="Ingrese su usuario" required>
+                                            <mat-error *ngIf="loginForm.get('username')?.hasError('required')">
+                                                El usuario es requerido
+                                            </mat-error>
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="input flex-center">
+                                        <mat-form-field class="med-width">
+                                            <mat-label>Contraseña</mat-label>
+                                            <input matInput formControlName="password" type="password"
+                                                placeholder="Ingrese su contraseña" required>
+                                            <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
+                                                La contraseña es requerida
+                                            </mat-error>
+                                        </mat-form-field>
+                                    </div>
+                                </div>
+                            </mat-card-content>
+                            <mat-card-actions class="flex-center">
+                                <button class="med-width" mat-raised-button color="secondary" type="submit" [disabled]="loginForm.invalid">
+                                    Ingresar
+                                </button>
+                            </mat-card-actions>
+                        </mat-card>
+
+
+
+                    </mat-card-content>
+                </form>
+            </mat-card>
+        </div>
+
+        <div class="item info"></div>
 
     </div>
 </div>

@@ -6,14 +6,47 @@
     background-position: center;
     background-repeat: no-repeat;
     display: flex;
+    flex-direction: column;
+    // justify-content: center;
+    // align-items: center;
+}
+
+.login-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.form-container{
+
+}
+
+.item {
+    align-items: stretch;
+}
+
+.login-card{
+    min-height: 100vh;
+    justify-content: center;
+}
+
+.login{
+    flex-grow: 1;
+}
+
+.info{
+    flex-grow: 8;
+}
+
+.flex-center {
+    display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.login-container {
-    width: 90%;
-}
-
 .full-width {
     width: 100%;
+}
+
+.med-width {
+    width: 75%;
 }
