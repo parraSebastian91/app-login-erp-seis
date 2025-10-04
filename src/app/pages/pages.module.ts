@@ -11,6 +11,8 @@ import { MatCardModule } from '@angular/material/card';
 import { PagesRoutingModule } from './pages-routing.module';
 import { LoginComponent } from './login/login.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+import { ThemeService } from '../core/theming/theme.service';
 
 
 @NgModule({
@@ -27,6 +29,10 @@ import { ReactiveFormsModule } from '@angular/forms';
     CommonModule,
     PagesRoutingModule,
     ReactiveFormsModule,
-  ]
+    HttpClientModule
+  ],
+  providers: [
+    ThemeService
+  ],
 })
 export class PagesModule { }

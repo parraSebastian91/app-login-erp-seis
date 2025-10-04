@@ -1,0 +1,15 @@
+@use './_primitives' as p;
+
+// Tokens semánticos para tema claro
+$semantic-tokens: (
+  primary: p.$color-blue-500,
+  primary-hover: p.$color-blue-600,
+  text: p.$color-gray-900,
+  text-muted: p.$color-gray-700,
+  bg: #ffffff,
+  surface: p.$color-gray-50,
+  border: p.$color-gray-100,
+  danger: p.$color-red-500,
+  success: p.$color-green-500,
+  focus-ring: p.$color-blue-500
+);

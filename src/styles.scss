@@ -1,13 +1,46 @@
-/* You can add global styles to this file, and also import other style files */
+@use './styles/themes/theme-factory';
 
 html, body {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
 }
 
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+body.theme-dark {
+  color-scheme: dark;
+}
 
-/* Importing Bootstrap SCSS file. */
-@import 'bootstrap/scss/bootstrap';
+a {
+  color: var(--primary);
+  text-decoration: none;
+  &:hover { color: var(--primary-hover); }
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid transparent;
+  background: var(--primary);
+  color: #fff;
+  font: 500 0.95rem/1 var(--font-stack, 'Inter', system-ui);
+  padding: 0.65rem 1rem;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background var(--transition-base), transform 80ms ease;
+  &:hover { background: var(--primary-hover); }
+  &:active { transform: translateY(1px); }
+  &:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+  &.secondary {
+    background: var(--surface);
+    color: var(--text);
+    border-color: var(--border);
+  }
+  &.danger {
+    background: var(--danger);
+  }
+}

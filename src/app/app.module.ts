@@ -8,6 +8,8 @@ import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { provideAuth, getAuth } from '@angular/fire/auth';
 import { environment } from '../environments/environment';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { CorsInterceptor } from './interceptors/cors.interceptor';
 
 @NgModule({
   declarations: [
@@ -16,6 +18,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
   imports: [
     BrowserModule,
     AppRoutingModule,
+    HttpClientModule,
     NgbModule
   ],
   providers: [
@@ -28,7 +31,12 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
       messagingSenderId: "641784311936", 
       measurementId: "G-XB5MQ25NSK" }
     )),
-    provideAuth(() => getAuth())
+    provideAuth(() => getAuth()),
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: CorsInterceptor,
+      multi: true
+    }
   ],
   bootstrap: [AppComponent]
 })

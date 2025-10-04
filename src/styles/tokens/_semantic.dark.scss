@@ -1,0 +1,14 @@
+@use './_primitives' as p;
+
+$semantic-tokens: (
+  primary: p.$color-blue-500,
+  primary-hover: p.$color-blue-600,
+  text: #f5f7fa,
+  text-muted: #b9c0cc,
+  bg: #121316,
+  surface: #1d1f24,
+  border: #2a2d33,
+  danger: p.$color-red-500,
+  success: p.$color-green-500,
+  focus-ring: p.$color-blue-500
+);
