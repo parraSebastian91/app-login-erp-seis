@@ -1,109 +1,3 @@
-<!-- <div class="full-window">
-    <div class="login-container">
-
-
-        <div class="item login">
-            <mat-card class="login-card">
-                <form [formGroup]="loginForm" (ngSubmit)="login()">
-                    <mat-card-content>
-
-                        <mat-card>
-                            <mat-card-header>
-                                <div mat-card-avatar class="example-header-image"></div>
-                                <mat-card-title>Login</mat-card-title>
-                                <mat-card-subtitle>Ingrese sus credenciales para ingresar al sistema</mat-card-subtitle>
-                            </mat-card-header>
-                            <mat-card-content>
-                                <div class="form-container">
-
-                                    <div class="input flex-center">
-                                        <mat-form-field class="med-width">
-                                            <mat-label>Usuario</mat-label>
-                                            <input matInput formControlName="username" type="text"
-                                                placeholder="Ingrese su usuario" required>
-                                            <mat-error *ngIf="loginForm.get('username')?.hasError('required')">
-                                                El usuario es requerido
-                                            </mat-error>
-                                        </mat-form-field>
-                                    </div>
-                                    <div class="input flex-center">
-                                        <mat-form-field class="med-width">
-                                            <mat-label>Contraseña</mat-label>
-                                            <input matInput formControlName="password" type="password"
-                                                placeholder="Ingrese su contraseña" required>
-                                            <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
-                                                La contraseña es requerida
-                                            </mat-error>
-                                        </mat-form-field>
-                                    </div>
-                                </div>
-                            </mat-card-content>
-                            <mat-card-actions class="flex-center">
-                                <button class="med-width" mat-raised-button color="secondary" type="submit" [disabled]="loginForm.invalid">
-                                    Ingresar
-                                </button>
-                            </mat-card-actions>
-                        </mat-card>
-
-
-
-                    </mat-card-content>
-                </form>
-            </mat-card>
-        </div>
-
-        <div class="item info"></div>
-
-    </div>
-</div> -->
-
-<!------ Include the above in your HEAD tag ---------->
-<!-- <div class="full-window">
-    <div class="login-wrap">
-        <form [formGroup]="loginForm" (ngSubmit)="login()">
-            <div class="login-html">
-                <input id="tab-1" type="radio" name="tab" class="sign-in" checked><label for="tab-1"
-                    class="tab">Ingreso</label>
-                <input id="tab-2" type="radio" name="tab" class="for-pwd"><label for="tab-2" class="tab">¿Olvidó su
-                    contraseña?</label>
-                <div class="login-form">
-                    <div class="sign-in-htm">
-                        <div class="group">
-                            <label for="user" class="label">Usuario o Correo</label>
-                            <input #user type="text" class="input" formControlName="username" autocomplete="username">
-                            <span class="error" *ngIf="loginForm.get('username')?.errors?.['pattern']">Usuario o correo
-                                inválido</span>
-                        </div>
-                        <div class="group">
-                            <label for="pass" class="label">Contraseña</label>
-                            <input #pass type="password" class="input" data-type="password"
-                                autocomplete="current-password" formControlName="password">
-                            <span class="error" *ngIf="loginForm.get('password')?.errors?.['minlength']">Contraseña incorrecta</span>
-                        </div>
-                        <div class="group">
-                            <input type="submit" class="button" value="Ingresar" >
-                        </div>
-                        <div class="hr"></div>
-                    </div>
-                    <div class="for-pwd-htm">
-                        <div class="group">
-                            <label for="user" class="label">Usuario o Correo</label>
-                            <input #userRecovery type="text" class="input" formControlName="passRecovery"
-                                autocomplete="username">
-                            <span class="error" *ngIf="loginForm.get('passRecovery')?.valid">Usuario o correo
-                                inválido</span>
-                        </div>
-                        <div class="group">
-                            <input type="submit" class="button" value="Reset Password">
-                        </div>
-                        <div class="hr"></div>
-                    </div>
-                </div>
-            </div>
-        </form>
-    </div>
-</div> -->
-
 <div class="login-wrapper">
   <div class="panel">
     <header class="brand">
@@ -114,7 +8,7 @@
 
     <form [formGroup]="form" (ngSubmit)="login()" novalidate>
       <div class="field">
-        <label>Email</label>
+        <label>username</label>
         <input #user type="text" class="input" formControlName="username" autocomplete="username">
         <small *ngIf="form.controls['username'].invalid && form.controls['username'].touched">
           Ingresa un email válido
