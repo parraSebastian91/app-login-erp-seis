@@ -1,0 +1,18 @@
+
+services:
+  app-login:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: app-login-erp
+    ports:
+      - "8080:80"
+    environment:
+      - NODE_ENV=production
+    restart: unless-stopped
+    networks:
+      - erp-network
+
+networks:
+  erp-network:
+    driver: bridge
