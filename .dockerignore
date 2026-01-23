@@ -1,12 +1,16 @@
 node_modules
-npm-debug.log
 dist
+. angular
 .git
 .gitignore
-README.md
-.angular
-.editorconfig
+*. md
+. editorconfig
 .vscode
-.DS_Store
+. idea
+npm-debug.log
+yarn-error.log
+. DS_Store
+Thumbs.db
 coverage
-e2e
+. nyc_output
+*. log

@@ -13,7 +13,10 @@ export interface LoginRequest {
 export interface AuthenticateResponse {
   status: number;
   message: string;
-  data: string[];
+  data: {
+    code: string;
+    url: string;
+  }[];
 }
 
 
@@ -53,13 +56,12 @@ export class AuthService {
     };
 
     let redirectUrl: URL = new URL('about:blank');
-    const code = redirectUrl.searchParams.get('code');
 
-    this.http.post<AuthenticateResponse>(`${environment.apiBaseURL}/auth/authenticate`, authorizeBody)
+    this.http.post<AuthenticateResponse>(`${environment.apiAuth}/auth/authenticate`, authorizeBody)
     .pipe(
       map(res => {
         
-        redirectUrl = new URL(environment.basePortal+res.data[0]); // pueden ser mas de 1 URLs, de momentos tomamos la primera
+        redirectUrl = new URL(environment.basePortal+res.data[0].url); // pueden ser mas de 1 URLs, de momentos tomamos la primera
         console.log('Redirigiendo al portal...');
         console.log(redirectUrl.toString());
           const code = redirectUrl.searchParams.get('code');
