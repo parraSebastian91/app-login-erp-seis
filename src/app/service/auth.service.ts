@@ -58,25 +58,25 @@ export class AuthService {
     let redirectUrl: URL = new URL('about:blank');
 
     this.http.post<AuthenticateResponse>(`${environment.apiAuth}/auth/authenticate`, authorizeBody)
-    .pipe(
-      map(res => {
-        
-        redirectUrl = new URL(environment.basePortal+res.data[0].url); // pueden ser mas de 1 URLs, de momentos tomamos la primera
-        console.log('Redirigiendo al portal...');
-        console.log(redirectUrl.toString());
+      .pipe(
+        map(res => {
+
+          redirectUrl = new URL(environment.basePortal + res.data[0].url); // pueden ser mas de 1 URLs, de momentos tomamos la primera
+          console.log('Redirigiendo al portal...');
+          console.log(redirectUrl.toString());
           const code = redirectUrl.searchParams.get('code');
-        if (!code) {
-          throw new Error('No se obtuvo code en la respuesta de autenticación');
-        }
-        return redirectUrl.toString();
-      }),
-      catchError(err => {
-        console.error('Login error:', err);
-        return throwError(() => err);
-      })
-    ).subscribe(async (fullRedirectUrl: string) => {
-      window.location.href = fullRedirectUrl;
-    });
+          if (!code) {
+            throw new Error('No se obtuvo code en la respuesta de autenticaciónß');
+          }
+          return redirectUrl.toString();
+        }),
+        catchError(err => {
+          console.error('Login error:', err);
+          return throwError(() => err);
+        })
+      ).subscribe(async (fullRedirectUrl: string) => {
+        window.location.href = fullRedirectUrl;
+      });
 
 
 
