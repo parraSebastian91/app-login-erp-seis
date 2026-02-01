@@ -10,5 +10,5 @@ export const environment = {
     // },
     production: false,
     apiAuth: 'http://ms-auth:3000',
-    basePortal: 'http://localhost:4201'
+    basePortal: 'http://localhost:8000/portal'
 };

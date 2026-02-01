@@ -10,5 +10,5 @@ export const environment = {
     // }, 
     production: false,
     apiAuth: 'http://localhost:8000/security',
-    basePortal: 'http://localhost:4201'
+    basePortal: 'http://localhost:8000/portal'
 };
