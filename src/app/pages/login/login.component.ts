@@ -6,6 +6,7 @@ import { AuthService } from '../../service/auth.service';
 import { ThemeService } from '../../core/theming/theme.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { environment } from '../../../environments/environment';
+import { ConfigService } from '../../service/config.service';
 
 
 @Component({
@@ -24,7 +25,8 @@ export class LoginComponent {
     private authService: AuthService,
     private fb: FormBuilder,
     private themeService: ThemeService,
-    private _snackBar: MatSnackBar
+    private _snackBar: MatSnackBar,
+    private config: ConfigService
   ) {
     this.form = this.fb.group({
       // username: new FormControl('', [Validators.required, Validators.pattern('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$')]),
@@ -54,10 +56,10 @@ export class LoginComponent {
           duration: 5000, verticalPosition: 'top', horizontalPosition: 'center'
         });
       } else {
-        window.location.href = environment.basePortal + url;
+        const base = this.config.getApiBase();
+        window.location.href = base + '/portal' +url;
       }
     } catch (err) {
-      console.error('Login error:', err);
       this._snackBar.open('Error al autenticar. Revise sus credenciales.', 'Cerrar', {
         duration: 5000, verticalPosition: 'top', horizontalPosition: 'center'
       });

@@ -7,8 +7,9 @@ export const environment = {
     //     messagingSenderId: "641784311936",
     //     appId: "1:641784311936:web:684fbb779da10a8bd3b665",
     //     measurementId: "G-XB5MQ25NSK"
-    // },
+    // }, 
     production: false,
-    apiAuth: 'http://localhost:8000/security',
-    basePortal: 'http://localhost:8000/portal'
+    apiProtocol: 'http',
+    apiPort: '8000',
 };
+

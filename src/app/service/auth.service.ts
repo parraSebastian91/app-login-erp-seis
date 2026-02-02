@@ -22,6 +22,7 @@ export interface AuthenticateResponse {
 
 
 import { User } from 'firebase/auth'; // Importa el tipo User
+import { ConfigService } from './config.service';
 @Injectable({
   providedIn: 'root'
 })
@@ -29,7 +30,7 @@ export class AuthService {
   private auth: Auth = inject(Auth);
   private provider = new GoogleAuthProvider();
   user$: Observable<User | null> = user(this.auth); // user$ emitirá el usuario o null
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private config: ConfigService) { }
 
   async loginWithGoogle() {
     try {
@@ -55,11 +56,12 @@ export class AuthService {
       username,
       password,
       code_challenge: challenge,
-      typeDevice: 'WEB'
+      typeDevice: this.detectDeviceType()
     };
 
     try {
-      const res = await firstValueFrom(this.http.post<AuthenticateResponse>(`${environment.apiAuth}/auth/authenticate`, authorizeBody));
+      const base = this.config.getApiBase(); // usa origen configurado
+      const res = await firstValueFrom(this.http.post<AuthenticateResponse>(`${base}/security/auth/authenticate`, authorizeBody)); 
       console.log(res);
       const url = (res.data && res.data.length && res.data[0].url) ? res.data[0].url : 'about:blank';
       return url;
@@ -125,11 +127,15 @@ export class AuthService {
     return this.base64urlEncode(buf);
   }
 
-  // async createCodeChallenge(verifier: string): Promise<string> {
-  //   const encoder = new TextEncoder();
-  //   const data = encoder.encode(verifier);
-  //   const digest = await crypto.subtle.digest('SHA-256', data);
-  //   return this.base64urlEncode(digest);
-  // }
+  private detectDeviceType(): LoginRequest['typeDevice'] {
+    const ua = navigator.userAgent || '';
+    const platform = navigator.platform || '';
+    const maxTouch = (navigator as any).maxTouchPoints || 0;
+
+    if (/postmanruntime/i.test(ua)) return 'POSTMAN';
+    if (/android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini|mobile/i.test(ua) || maxTouch > 0) return 'MOBILE';
+    if (/electron/i.test(ua) || /Win|Mac|Linux/.test(platform)) return 'DESKTOP';
+    return 'WEB';
+  }
 
 }
