@@ -9,6 +9,6 @@ export const environment = {
     //     measurementId: "G-XB5MQ25NSK"
     // },
     production: false,
-    apiAuth: 'http://ms-auth:3000',
+    apiAuth: 'http://localhost:8000/security',
     basePortal: 'http://localhost:8000/portal'
 };

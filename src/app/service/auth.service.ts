@@ -1,8 +1,9 @@
 import { inject, Injectable } from '@angular/core';
 import { Auth, GoogleAuthProvider, signInWithPopup, signOut, user } from '@angular/fire/auth';
-import { catchError, map, Observable, throwError } from 'rxjs';
+import { firstValueFrom, Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
+import * as CryptoJS from 'crypto-js';
 
 export interface LoginRequest {
   username: string;
@@ -43,10 +44,12 @@ export class AuthService {
     }
   }
 
-  async loginWithEmailPassword(username: string, password: string): Promise<void> {
+  async loginWithEmailPassword(username: string, password: string): Promise<any> {
 
     const verifier = await this.generateCodeVerifier();
     const challenge = await this.createCodeChallenge(verifier);
+    // guarda el verifier para el intercambio de tokens posterior
+    sessionStorage.setItem('pkce_verifier', verifier);
 
     const authorizeBody = {
       username,
@@ -55,46 +58,15 @@ export class AuthService {
       typeDevice: 'WEB'
     };
 
-    let redirectUrl: URL = new URL('about:blank');
-
-    this.http.post<AuthenticateResponse>(`${environment.apiAuth}/auth/authenticate`, authorizeBody)
-      .pipe(
-        map(res => {
-
-          redirectUrl = new URL(environment.basePortal + res.data[0].url); // pueden ser mas de 1 URLs, de momentos tomamos la primera
-          console.log('Redirigiendo al portal...');
-          console.log(redirectUrl.toString());
-          const code = redirectUrl.searchParams.get('code');
-          if (!code) {
-            throw new Error('No se obtuvo code en la respuesta de autenticaciónß');
-          }
-          return redirectUrl.toString();
-        }),
-        catchError(err => {
-          console.error('Login error:', err);
-          return throwError(() => err);
-        })
-      ).subscribe(async (fullRedirectUrl: string) => {
-        window.location.href = fullRedirectUrl;
-      });
-
-
-
-    // 3) intercambiar code por token (en backend): enviar code_verifier
-    // const tokenBody = new URLSearchParams();
-    // tokenBody.set('grant_type', 'authorization_code');
-    // tokenBody.set('code', code);
-    // tokenBody.set('code_verifier', verifier);
-
-    // // El backend creará JWT y SET-Cookie HttpOnly; aquí request conCredentials para permitir cookies
-    // await this.http.post(`${environment.apiBaseURL}/auth/token`, tokenBody.toString(), {
-    //   headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    //   withCredentials: true
-    // }).toPromise();
-
-    // // 4) redirigir al portal (la cookie HttpOnly ya está seteada)
-
-
+    try {
+      const res = await firstValueFrom(this.http.post<AuthenticateResponse>(`${environment.apiAuth}/auth/authenticate`, authorizeBody));
+      console.log(res);
+      const url = (res.data && res.data.length && res.data[0].url) ? res.data[0].url : 'about:blank';
+      return url;
+    } catch (err) {
+      console.error('Error authenticating:', err);
+      throw err;
+    }
   }
 
   async logout() {
@@ -129,11 +101,35 @@ export class AuthService {
     return btoa(str).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
   }
 
-  async createCodeChallenge(verifier: string): Promise<string> {
-    const encoder = new TextEncoder();
-    const data = encoder.encode(verifier);
-    const digest = await crypto.subtle.digest('SHA-256', data);
-    return this.base64urlEncode(digest);
+  private hexToArrayBuffer(hex: string): ArrayBuffer {
+    const typed = new Uint8Array(hex.length / 2);
+    for (let i = 0; i < typed.length; i++) {
+      typed[i] = parseInt(hex.substr(i * 2, 2), 16);
+    }
+    return typed.buffer;
   }
+
+  async createCodeChallenge(verifier: string): Promise<string> {
+    // intenta Web Crypto (incluye webkitSubtle en iOS WebKit)
+    const subtle = (window.crypto as any)?.subtle || (window.crypto as any)?.webkitSubtle;
+    if (subtle && typeof subtle.digest === 'function') {
+      const encoder = new TextEncoder();
+      const data = encoder.encode(verifier);
+      const digest = await subtle.digest('SHA-256', data);
+      return this.base64urlEncode(digest);
+    }
+
+    // fallback usando crypto-js (para navegadores sin crypto.subtle, p.e. algunos webviews iOS)
+    const hashHex = CryptoJS.SHA256(verifier).toString(CryptoJS.enc.Hex);
+    const buf = this.hexToArrayBuffer(hashHex);
+    return this.base64urlEncode(buf);
+  }
+
+  // async createCodeChallenge(verifier: string): Promise<string> {
+  //   const encoder = new TextEncoder();
+  //   const data = encoder.encode(verifier);
+  //   const digest = await crypto.subtle.digest('SHA-256', data);
+  //   return this.base64urlEncode(digest);
+  // }
 
 }
