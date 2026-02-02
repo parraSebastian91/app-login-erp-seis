@@ -13,12 +13,13 @@ import { LoginComponent } from './login/login.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { ThemeService } from '../core/theming/theme.service';
-
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @NgModule({
   declarations: [
     LoginComponent
-  ],imports: [
+  ], imports: [
+    MatSnackBarModule,
     MatSlideToggleModule,
     MatButtonModule,
     MatFormFieldModule,

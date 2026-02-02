@@ -4,6 +4,8 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import Swal from 'sweetalert2'
 import { AuthService } from '../../service/auth.service';
 import { ThemeService } from '../../core/theming/theme.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { environment } from '../../../environments/environment';
 
 
 @Component({
@@ -21,7 +23,8 @@ export class LoginComponent {
   constructor(
     private authService: AuthService,
     private fb: FormBuilder,
-    private themeService: ThemeService
+    private themeService: ThemeService,
+    private _snackBar: MatSnackBar
   ) {
     this.form = this.fb.group({
       // username: new FormControl('', [Validators.required, Validators.pattern('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$')]),
@@ -34,25 +37,33 @@ export class LoginComponent {
 
 
   async login() {
-    // Lógica para iniciar sesión
-    if (this.form.valid) {
-      const { username, password } = this.form.value;
-      const response = await this.authService.loginWithEmailPassword(username, password);
-      console.log('Respuesta del login:', response);
-      // Aquí puedes llamar al servicio de autenticación
-    } else {
-      Swal.fire({
-        title: '',
-        text: 'Usuario o contraseña inválidos',
-        icon: 'warning',
-        confirmButtonText: 'OK'
-      })
+    if (!this.form.valid) {
+      this._snackBar.open('Complete los campos requeridos', 'Cerrar', {
+        duration: 5000, verticalPosition: 'top', horizontalPosition: 'center'
+      });
+      return;
     }
-  }
 
-  logout() {
-    // Lógica para cerrar sesión
-    console.log('Cerrar sesión');
+    const { username, password } = this.form.value;
+    this.loading = true;
+    try {
+      const url = await this.authService.loginWithEmailPassword(username, password);
+      console.log('response login component', url);
+      if (!url || url === 'about:blank') {
+        this._snackBar.open('Usuario o contraseña inválidos', 'Cerrar', {
+          duration: 5000, verticalPosition: 'top', horizontalPosition: 'center'
+        });
+      } else {
+        window.location.href = environment.basePortal + url;
+      }
+    } catch (err) {
+      console.error('Login error:', err);
+      this._snackBar.open('Error al autenticar. Revise sus credenciales.', 'Cerrar', {
+        duration: 5000, verticalPosition: 'top', horizontalPosition: 'center'
+      });
+    } finally {
+      this.loading = false;
+    }
   }
 
   getThemeService(): ThemeService {
