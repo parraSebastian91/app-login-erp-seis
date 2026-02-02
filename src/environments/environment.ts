@@ -12,4 +12,3 @@ export const environment = {
     apiProtocol: 'http',
     apiPort: '8000',
 };
-

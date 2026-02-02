@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 
 import Swal from 'sweetalert2'
@@ -15,7 +15,7 @@ import { ConfigService } from '../../service/config.service';
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   title = 'app-login-erp-seis';
   loading = false;
   errorMsg = '';
@@ -35,6 +35,21 @@ export class LoginComponent {
       // passRecovery: [''],
       remember: [true]
     });
+  }
+
+  ngOnInit(): void {
+    const params = new URLSearchParams(window.location.search);
+    const message = params.get('message') || params.get('msg');
+    const status = params.get('status');
+    if (message) {
+      this._snackBar.open(decodeURIComponent(message), 'Cerrar', {
+        duration: 5000, verticalPosition: 'top', horizontalPosition: 'center'
+      });
+    } else if (status === 'expired') {
+      this._snackBar.open('Sesión expirada. Inicie sesión nuevamente.', 'Cerrar', {
+        duration: 5000, verticalPosition: 'top', horizontalPosition: 'center'
+      });
+    }
   }
 
 
@@ -57,7 +72,7 @@ export class LoginComponent {
         });
       } else {
         const base = this.config.getApiBase();
-        window.location.href = base + '/portal' +url;
+        window.location.href = base + '/portal' + url;
       }
     } catch (err) {
       this._snackBar.open('Error al autenticar. Revise sus credenciales.', 'Cerrar', {

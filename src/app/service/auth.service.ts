@@ -66,7 +66,8 @@ export class AuthService {
       const url = (res.data && res.data.length && res.data[0].url) ? res.data[0].url : 'about:blank';
       return url;
     } catch (err) {
-      console.error('Error authenticating:', err);
+      console.error('Error authenticating:');
+      console.error(err);
       throw err;
     }
   }

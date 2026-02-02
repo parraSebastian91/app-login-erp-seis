@@ -9,7 +9,7 @@ export const environment = {
     //     measurementId: "G-XB5MQ25NSK"
     // }, 
     production: false,
-    apiProtocol: 'http',
+    apiProtocol: 'https',
     apiPort: '8000',
 };
 

@@ -18,14 +18,14 @@ export class ConfigService {
 
   getProtocol(): string {
     // environment.apiProtocol puede ser 'http' | 'https'
-    const envProto = environment.apiProtocol;
-    if (envProto) return envProto.replace(/:$/, '');
+    // const envProto = environment.apiProtocol;
+    // if (envProto) return envProto.replace(/:$/, '');
     const p = window.location.protocol || 'http:';
     return p.replace(':', '');
   }
 
   getPort(): string | null {
-    return environment.apiPort || (window.location.port || null);
+    return  window.location.port || null;
   }
 
   getOrigin(): string {
