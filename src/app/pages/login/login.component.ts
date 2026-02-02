@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 
-import Swal from 'sweetalert2'
+
 import { AuthService } from '../../service/auth.service';
 import { ThemeService } from '../../core/theming/theme.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { environment } from '../../../environments/environment';
 import { ConfigService } from '../../service/config.service';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -26,7 +27,8 @@ export class LoginComponent implements OnInit {
     private fb: FormBuilder,
     private themeService: ThemeService,
     private _snackBar: MatSnackBar,
-    private config: ConfigService
+    private config: ConfigService,
+    private router: Router
   ) {
     this.form = this.fb.group({
       // username: new FormControl('', [Validators.required, Validators.pattern('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$')]),
@@ -81,6 +83,10 @@ export class LoginComponent implements OnInit {
     } finally {
       this.loading = false;
     }
+  }
+
+  restablecerpassword() {
+    this.router.navigate(['pages','restablecer-password']);
   }
 
   getThemeService(): ThemeService {

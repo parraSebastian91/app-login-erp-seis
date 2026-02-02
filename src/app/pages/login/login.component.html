@@ -33,7 +33,7 @@
           <input type="checkbox" formControlName="remember" />
           <span>Recordarme</span>
         </label>
-        <button type="button" class="link-btn">¿Olvidaste tu contraseña?</button>
+        <button type="button" class="link-btn" (click)="restablecerpassword()">¿Olvidaste tu contraseña?</button>
       </div>
 
       <button class="button primary full" [disabled]="loading || form.invalid">

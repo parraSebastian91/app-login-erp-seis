@@ -10,6 +10,7 @@ import { environment } from '../environments/environment';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { CorsInterceptor } from './interceptors/cors.interceptor';
+import { RestablecerPasswordComponent } from './pages/restablecer-password/restablecer-password.component';
 
 @NgModule({
   declarations: [

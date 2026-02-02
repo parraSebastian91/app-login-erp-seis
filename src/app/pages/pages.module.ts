@@ -14,10 +14,13 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { ThemeService } from '../core/theming/theme.service';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { RestablecerPasswordComponent } from './restablecer-password/restablecer-password.component';
+import { RouterModule } from '@angular/router';
 
 @NgModule({
   declarations: [
-    LoginComponent
+    LoginComponent,
+    RestablecerPasswordComponent
   ], imports: [
     MatSnackBarModule,
     MatSlideToggleModule,
@@ -30,6 +33,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     CommonModule,
     PagesRoutingModule,
     ReactiveFormsModule,
+    RouterModule,
     HttpClientModule
   ],
   providers: [

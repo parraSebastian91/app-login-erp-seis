@@ -72,13 +72,43 @@ export class AuthService {
     }
   }
 
-  async logout() {
+  async validateEmail(correo: string): Promise<any> {
+    const requestChangePAssword = this.http.post<any>(`${this.config.getApiBase()}/security/auth/password-reset/request`, { correo }); 
     try {
-      await signOut(this.auth);
-      console.log('¡Sesión cerrada!');
-      // Puedes redirigir al usuario a la página de inicio de sesión
-    } catch (error) {
-      console.error('Error al cerrar sesión:', error);
+      const res = await firstValueFrom(requestChangePAssword); 
+      console.log(res);
+      const url = (res.data && res.data.length && res.data[0].url) ? res.data[0].url : 'about:blank';
+      return url;
+    } catch (err) {
+      console.error('Error validating email:');
+      console.error(err);
+      throw err;
+    }
+  }
+
+  async resetPassword(body: any): Promise<any> {
+    const resetPasswordRequest = this.http.post<any>(`${this.config.getApiBase()}/security/auth/password-reset/reset`, body); 
+    try {
+      const res = await firstValueFrom(resetPasswordRequest); 
+      console.log(res);
+      return res;
+    } catch (err) {
+      console.error('Error resetting password:');
+      console.error(err);
+      throw err;
+    }
+  }
+
+  async validateToken(token: string, sessionId: string): Promise<any> {
+    try {
+      const validateTokenRequest = this.http.get<any>(`${this.config.getApiBase()}/security/auth/password-reset/validate?token=${encodeURIComponent(token)}&uuid=${encodeURIComponent(sessionId)}`); 
+      const res = await firstValueFrom(validateTokenRequest); 
+      console.log(res);
+      return res;
+    } catch (err) {
+      console.error('Error validating token:');
+      console.error(err);
+      throw err;
     }
   }
 
