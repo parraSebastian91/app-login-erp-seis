@@ -4,10 +4,14 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 
 COPY package.json package-lock.json ./
-RUN npm ci --legacy-peer-deps
+RUN npm ci --legacy-peer-deps && \
+    rm -rf node_modules/esbuild node_modules/@esbuild && \
+    npm install esbuild --force --legacy-peer-deps
 
 COPY . . 
-RUN npm run build -- --configuration production
+RUN rm -rf node_modules/.cache && \
+    rm -rf node_modules/.vite && \
+    npm run build -- --configuration production
 
 # 🔍 DEBUG: Ver qué se generó
 RUN echo "=== Contenido de dist/ ===" && \
