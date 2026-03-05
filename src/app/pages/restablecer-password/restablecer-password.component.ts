@@ -6,6 +6,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ConfigService } from '../../service/config.service';
 
 import Swal from 'sweetalert2'
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-restablecer-password',
@@ -31,7 +32,9 @@ export class RestablecerPasswordComponent {
     private fb: FormBuilder,
     private themeService: ThemeService,
     private _snackBar: MatSnackBar,
-    private config: ConfigService
+    private config: ConfigService,
+    private routing: Router
+
   ) {
     this.emailValidate = this.fb.group({
       // username: new FormControl('', [Validators.required, Validators.pattern('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$')]),
@@ -83,7 +86,7 @@ export class RestablecerPasswordComponent {
     try {
       const url = await this.authService.validateEmail(correo);
       console.log('response login component', url);
-      if (!url || url === 'about:blank') {
+      if (!url) {
         this._snackBar.open('Correo electrónico no válido', 'Cerrar', {
           duration: 5000, verticalPosition: 'top', horizontalPosition: 'center'
         });
@@ -94,7 +97,7 @@ export class RestablecerPasswordComponent {
           text: 'Se ha enviado un correo electrónico con las instrucciones para restablecer su contraseña.',
           confirmButtonText: 'Aceptar'
         }).then(() => {
-          window.location.href = this.config.getApiBase() + '/portal/login';
+          this.routing.navigate(['/pages/login']);
         });
       }
     } catch (err) {
@@ -126,14 +129,23 @@ export class RestablecerPasswordComponent {
       this.bodyRestPass.confirmPassword = confirmPassword;
       this.authService.resetPassword(this.bodyRestPass).then(respuesta => {
         console.log(respuesta);
-        this._snackBar.open('Contraseña restablecida con éxito', 'Cerrar', {
-          duration: 5000, verticalPosition: 'top', horizontalPosition: 'center'
+        Swal.fire({
+          icon: 'success',
+          title: 'Proceso exitoso',
+          text: 'Se ha restablecido su contraseña correctamente.',
+          confirmButtonText: 'Aceptar'
+        }).then(() => {
+          this.routing.navigate(['/pages/login']);
         });
-        window.location.href = this.config.getApiBase() + '/portal/login';
       }).catch(err => {
         console.error(err);
-        this._snackBar.open('Error al restablecer la contraseña. Intente nuevamente.', 'Cerrar', {
-          duration: 5000, verticalPosition: 'top', horizontalPosition: 'center'
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'No se pudo restablecer su contraseña. Intente nuevamente.',
+          confirmButtonText: 'Aceptar'
+        }).then(() => {
+          this.routing.navigate(['/pages/login']);
         });
       });
       this.loading = true;
