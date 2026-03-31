@@ -1,9 +1,8 @@
 import { inject, Injectable } from '@angular/core';
-import { Auth, GoogleAuthProvider, signInWithPopup, signOut, user } from '@angular/fire/auth';
+import { Auth, GoogleAuthProvider, signInWithPopup, user } from '@angular/fire/auth';
 import { firstValueFrom, Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '../../environments/environment';
-import * as CryptoJS from 'crypto-js';
+import { createHash } from "crypto";
 
 export interface LoginRequest {
   username: string;
@@ -61,7 +60,7 @@ export class AuthService {
 
     try {
       const base = this.config.getApiBase(); // usa origen configurado
-      const res = await firstValueFrom(this.http.post<AuthenticateResponse>(`${base}/api/auth/security/authenticate`, authorizeBody)); 
+      const res = await firstValueFrom(this.http.post<AuthenticateResponse>(`${base}/api/auth/security/authenticate`, authorizeBody));
       console.log(res);
       const url = (res.data && res.data.length && res.data[0].url) ? res.data[0].url : 'about:blank';
       return url;
@@ -73,9 +72,9 @@ export class AuthService {
   }
 
   async validateEmail(correo: string): Promise<any> {
-    const requestChangePAssword = this.http.post<any>(`${this.config.getApiBase()}/api/auth/security/password-reset/request`, { correo }); 
+    const requestChangePAssword = this.http.post<any>(`${this.config.getApiBase()}/api/auth/security/password-reset/request`, { correo });
     try {
-      const res = await firstValueFrom(requestChangePAssword); 
+      const res = await firstValueFrom(requestChangePAssword);
       console.log(res);
       const url = (res.data && res.data.length && res.data[0].url) ? res.data[0].url : 'about:blank';
       return url;
@@ -87,9 +86,9 @@ export class AuthService {
   }
 
   async resetPassword(body: any): Promise<any> {
-    const resetPasswordRequest = this.http.post<any>(`${this.config.getApiBase()}/api/auth/security/password-reset/reset`, body); 
+    const resetPasswordRequest = this.http.post<any>(`${this.config.getApiBase()}/api/auth/security/password-reset/reset`, body);
     try {
-      const res = await firstValueFrom(resetPasswordRequest); 
+      const res = await firstValueFrom(resetPasswordRequest);
       console.log(res);
       return res;
     } catch (err) {
@@ -101,8 +100,8 @@ export class AuthService {
 
   async validateToken(token: string, sessionId: string): Promise<any> {
     try {
-      const validateTokenRequest = this.http.get<any>(`${this.config.getApiBase()}/api/auth/security/password-reset/validate?token=${encodeURIComponent(token)}&uuid=${encodeURIComponent(sessionId)}`); 
-      const res = await firstValueFrom(validateTokenRequest); 
+      const validateTokenRequest = this.http.get<any>(`${this.config.getApiBase()}/api/auth/security/password-reset/validate?token=${encodeURIComponent(token)}&uuid=${encodeURIComponent(sessionId)}`);
+      const res = await firstValueFrom(validateTokenRequest);
       console.log(res);
       return res;
     } catch (err) {
@@ -112,18 +111,12 @@ export class AuthService {
     }
   }
 
-  setAccessToken(token: string) {
-    // this.accessTokenSubject.next(token);
-    sessionStorage.setItem('access_token', token);
-    // si quieres persistencia entre pestañas: localStorage.setItem('access_token', token);
-  }
-
   async generateCodeVerifier(length = 128): Promise<string> {
     // PKCE requiere: 43-128 caracteres de unreserved characters [A-Z a-z 0-9 - . _ ~]
     if (length < 43 || length > 128) {
       length = 128;
     }
-    
+
     const unreserved = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~';
     const array = new Uint8Array(length);
     crypto.getRandomValues(array);
@@ -150,23 +143,8 @@ export class AuthService {
 
   async createCodeChallenge(verifier: string): Promise<string> {
     try {
-      // Intenta usar Web Crypto API (incluye webkitSubtle en iOS WebKit)
-      const subtle = (window.crypto as any)?.subtle || (window.crypto as any)?.webkitSubtle;
-      if (subtle && typeof subtle.digest === 'function') {
-        const encoder = new TextEncoder();
-        const data = encoder.encode(verifier);
-        const digest = await subtle.digest('SHA-256', data);
-        return this.base64urlEncode(digest);
-      }
-    } catch (error) {
-      console.warn('Web Crypto API no disponible, usando fallback:', error);
-    }
-
-    // Fallback: usar crypto-js (para navegadores sin Web Crypto, p.e. algunos webviews iOS)
-    try {
-      const hashHex = CryptoJS.SHA256(verifier).toString(CryptoJS.enc.Hex);
-      const buf = this.hexToArrayBuffer(hashHex);
-      return this.base64urlEncode(buf);
+      const hash = createHash('sha256').update(verifier).digest();
+      return hash.toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
     } catch (error) {
       console.error('Error generando code challenge:', error);
       throw new Error('No se pudo generar el code challenge');
