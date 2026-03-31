@@ -23,6 +23,7 @@
     "@ng-bootstrap/ng-bootstrap": "^18.0.0",
     "@popperjs/core": "^2.11.8",
     "bootstrap": "^5.3.3",
+    "crypto": "^1.0.1",
     "crypto-js": "^4.2.0",
     "firebase": "^11.8.1",
     "rxjs": "~7.8.0",

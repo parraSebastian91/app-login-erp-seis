@@ -2,7 +2,6 @@ import { inject, Injectable } from '@angular/core';
 import { Auth, GoogleAuthProvider, signInWithPopup, user } from '@angular/fire/auth';
 import { firstValueFrom, Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { createHash } from "crypto";
 
 export interface LoginRequest {
   username: string;
@@ -143,8 +142,9 @@ export class AuthService {
 
   async createCodeChallenge(verifier: string): Promise<string> {
     try {
-      const hash = createHash('sha256').update(verifier).digest();
-      return hash.toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+      const data = new TextEncoder().encode(verifier);
+      const digest = await crypto.subtle.digest('SHA-256', data);
+      return this.base64urlEncode(digest);
     } catch (error) {
       console.error('Error generando code challenge:', error);
       throw new Error('No se pudo generar el code challenge');
