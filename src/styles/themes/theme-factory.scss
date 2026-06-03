@@ -1,0 +1,28 @@
+@use '../tokens/_semantic.light' as light;
+@use '../tokens/_semantic.dark' as dark;
+
+// Mixin que recibe un mapa y emite variables CSS
+@mixin emit-theme($map) {
+  @each $name, $value in $map {
+    --#{$name}: #{$value};
+  }
+}
+
+:root,
+.theme-light {
+  @include emit-theme(light.$semantic-tokens);
+}
+
+.theme-dark {
+  @include emit-theme(dark.$semantic-tokens);
+}
+
+// Variables derivadas (component tokens)
+:root,
+.theme-light,
+.theme-dark {
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --focus-ring: 0 0 0 3px color-mix(in srgb, var(--focus-ring) 55%, transparent);
+  --transition-base: 150ms ease;
+}

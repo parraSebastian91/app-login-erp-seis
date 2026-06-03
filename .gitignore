@@ -1,0 +1,179 @@
+# See https://docs.github.com/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
+
+# Compiled output
+/dist
+/tmp
+/out-tsc
+/bazel-out
+
+# Node
+/node_modules
+npm-debug.log
+yarn-error.log
+
+# IDEs and editors
+.idea/
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/*
+
+# Miscellaneous
+/.angular/cache
+.sass-cache/
+/connect.lock
+/coverage
+/libpeerconnection.log
+testem.log
+/typings
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Firebase
+.firebase
+*-debug.log
+.runtimeconfig.json
+
+
+# ==============================================================================
+# CODE ANALYSIS & INDEXING (Generados - se reindexan cuando sea necesario)
+# ==============================================================================
+# CodeGraph
+.codegraph/
+codegraph.json
+codegraph-*.json
+
+# Graphify
+graphify-out/
+*.graph.json
+GRAPH_REPORT.md
+
+# Reportes y análisis
+*-report.json
+dependency-report.json
+impact-analysis.json
+.analysis-cache/
+
+# ==============================================================================
+# BUILD & COMPILATION ARTIFACTS
+# ==============================================================================
+# TypeScript outputs
+tsc-out/
+*.tsbuildinfo
+
+# Angular
+.angular/
+angular-out/
+
+# Nuxt
+.nuxt/
+
+# Next.js
+.next/
+.vercel/
+
+# Gatsby
+.cache/
+.gatsby-cache/
+public/
+
+# Jest & Testing
+test-results/
+junit.xml
+coverage-final.json
+
+# ==============================================================================
+# TEMPORARY & CACHE FILES
+# ==============================================================================
+.temp/
+temp/
+tmp/
+*.tmp
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Package manager cache
+.npm/
+.yarn/cache/
+.pnpm-store/
+pnpm-lock.yaml.backup
+# ==============================================================================
+# CODE ANALYSIS & INDEXING (Generados - se reindexan cuando sea necesario)
+# ==============================================================================
+# CodeGraph
+.codegraph/
+codegraph.json
+codegraph-*.json
+
+# Graphify
+graphify-out/
+*.graph.json
+GRAPH_REPORT.md
+
+# Reportes y análisis
+*-report.json
+dependency-report.json
+impact-analysis.json
+.analysis-cache/
+
+# ==============================================================================
+# BUILD & COMPILATION ARTIFACTS
+# ==============================================================================
+# TypeScript outputs
+tsc-out/
+*.tsbuildinfo
+
+# Angular
+.angular/
+angular-out/
+
+# Nuxt
+.nuxt/
+
+# Next.js
+.next/
+.vercel/
+
+# Gatsby
+.cache/
+.gatsby-cache/
+public/
+
+# Jest & Testing
+test-results/
+junit.xml
+coverage-final.json
+
+# ==============================================================================
+# TEMPORARY & CACHE FILES
+# ==============================================================================
+.temp/
+temp/
+tmp/
+*.tmp
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Package manager cache
+.npm/
+.yarn/cache/
+.pnpm-store/
+pnpm-lock.yaml.backup
