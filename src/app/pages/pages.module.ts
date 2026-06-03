@@ -7,6 +7,7 @@ import { MatError, MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { PagesRoutingModule } from './pages-routing.module';
 import { LoginComponent } from './login/login.component';
@@ -15,13 +16,18 @@ import { HttpClientModule } from '@angular/common/http';
 import { ThemeService } from '../core/theming/theme.service';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { RestablecerPasswordComponent } from './restablecer-password/restablecer-password.component';
+import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
+import { ResetPasswordComponent } from './reset-password/reset-password.component';
 import { RouterModule } from '@angular/router';
 
 @NgModule({
   declarations: [
     LoginComponent,
-    RestablecerPasswordComponent
-  ], imports: [
+    RestablecerPasswordComponent,
+    ForgotPasswordComponent,
+    ResetPasswordComponent,
+  ],
+  imports: [
     MatSnackBarModule,
     MatSlideToggleModule,
     MatButtonModule,
@@ -29,6 +35,7 @@ import { RouterModule } from '@angular/router';
     MatInputModule,
     MatIconModule,
     MatCardModule,
+    MatProgressSpinnerModule,
     MatError,
     CommonModule,
     PagesRoutingModule,

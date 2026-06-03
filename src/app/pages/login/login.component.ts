@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 
@@ -13,9 +13,10 @@ import { Router } from '@angular/router';
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   loading = false;
   errorMsg = '';
+  successMsg = '';
   submitted = false;
   showPassword = false;
 
@@ -33,6 +34,13 @@ export class LoginComponent {
     });
   }
 
+  ngOnInit(): void {
+    const state = this.router.lastSuccessfulNavigation?.extras?.state as Record<string, unknown> | undefined;
+    if (state?.['toast'] === 'password-updated') {
+      this.successMsg = 'Contraseña actualizada. Puedes iniciar sesión.';
+    }
+  }
+
   get usernameCtrl() { return this.form.controls['username']; }
   get passwordCtrl() { return this.form.controls['password']; }
 
@@ -43,10 +51,11 @@ export class LoginComponent {
     const { username, password } = this.form.value;
     this.loading = true;
     this.errorMsg = '';
+    this.successMsg = '';
 
     try {
       const redirectUrl = await this.authService.loginWithEmailPassword(username, password);
-      window.location.href = redirectUrl;
+      globalThis.location.href = redirectUrl;
     } catch (err) {
       this.loading = false;
       const httpErr = err as HttpErrorResponse;
@@ -63,7 +72,7 @@ export class LoginComponent {
   }
 
   forgotPassword() {
-    this.router.navigate(['pages', 'restablecer-password']);
+    this.router.navigate(['pages', 'forgot-password']);
   }
 
   getThemeService(): ThemeService {

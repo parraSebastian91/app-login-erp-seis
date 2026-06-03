@@ -68,6 +68,8 @@
           </button>
         </div>
 
+        <p class="success-msg" *ngIf="successMsg" role="status">{{ successMsg }}</p>
+
         <p class="error" *ngIf="errorMsg" role="alert">{{ errorMsg }}</p>
 
         <button type="submit" class="button primary full" [disabled]="loading">
