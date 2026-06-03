@@ -1,53 +1,89 @@
-<div class="login-wrapper">
-  <div class="panel">
-    <header class="brand">
-      <img src="assets/logo.svg" alt="ERP" class="logo" />
-      <h1>Bienvenido</h1>
-      <p class="subtitle">Accede a tu panel de gestión</p>
-    </header>
+<div class="login-layout">
 
-    <form [formGroup]="form" (ngSubmit)="login()" novalidate>
-      <div class="field">
-        <label>username</label>
-        <input #user type="text" class="input" formControlName="username" autocomplete="username">
-        <small *ngIf="form.controls['username'].invalid && form.controls['username'].touched">
-          Ingresa un email válido
-        </small>
-      </div>
+  <!-- Panel izquierdo: branding (oculto en móvil) -->
+  <aside class="brand-panel" aria-hidden="true">
+    <div class="brand-content">
+      <img src="assets/logo.svg" alt="SEIS ERP" class="brand-logo" />
+      <h2 class="brand-title">SEIS ERP</h2>
+      <p class="brand-tagline">Financiamiento para empresas<br>que no esperan.</p>
+    </div>
+    <div class="brand-pattern"></div>
+  </aside>
 
-      <div class="field">
-        <label>Contraseña</label>
-        <input
-          type="password"
-          formControlName="password"
-          autocomplete="current-password"
-          [class.invalid]="form.controls['password'].invalid && form.controls['password'].touched"
-        />
-        <small *ngIf="form.controls['password'].invalid && form.controls['password'].touched">
-          La contraseña es requerida
-        </small>
-      </div>
+  <!-- Panel derecho: formulario -->
+  <main class="form-panel">
+    <div class="form-card">
 
-      <div class="meta-row">
-        <label class="remember">
-          <input type="checkbox" formControlName="remember" />
-          <span>Recordarme</span>
-        </label>
-        <button type="button" class="link-btn" (click)="restablecerpassword()">¿Olvidaste tu contraseña?</button>
-      </div>
+      <header class="form-header">
+        <img src="assets/logo.svg" alt="SEIS ERP" class="form-logo" />
+        <h1>Bienvenido</h1>
+        <p class="subtitle">Accede a tu panel de gestión</p>
+      </header>
 
-      <button class="button primary full" [disabled]="loading || form.invalid">
-        <span *ngIf="!loading">Ingresar</span>
-        <span *ngIf="loading" class="spinner"></span>
-      </button>
+      <form [formGroup]="form" (ngSubmit)="login()" novalidate>
 
-      <p class="error" *ngIf="errorMsg">{{ errorMsg }}</p>
-    </form>
+        <div class="field">
+          <label for="username">Nombre de usuario</label>
+          <input
+            id="username"
+            type="text"
+            formControlName="username"
+            autocomplete="username"
+            [class.invalid]="submitted && usernameCtrl.invalid"
+            placeholder="Ingresa tu usuario"
+          />
+          <small *ngIf="submitted && usernameCtrl.errors?.['required']">
+            Este campo es obligatorio
+          </small>
+        </div>
 
-    <footer class="panel-footer">
-      <button type="button" class="button secondary sm" (click)="switchTheme()">
-        Cambiar a {{ getThemeService().current === 'light' ? 'oscuro' : 'claro' }}
-      </button>
-    </footer>
-  </div>
+        <div class="field">
+          <label for="password">Contraseña</label>
+          <div class="password-wrap">
+            <input
+              id="password"
+              [type]="showPassword ? 'text' : 'password'"
+              formControlName="password"
+              autocomplete="current-password"
+              [class.invalid]="submitted && passwordCtrl.invalid"
+              placeholder="Ingresa tu contraseña"
+            />
+            <button
+              type="button"
+              class="toggle-pw"
+              (click)="showPassword = !showPassword"
+              [attr.aria-label]="showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+            >
+              <span class="material-icons">{{ showPassword ? 'visibility_off' : 'visibility' }}</span>
+            </button>
+          </div>
+          <small *ngIf="submitted && passwordCtrl.errors?.['required']">
+            Este campo es obligatorio
+          </small>
+        </div>
+
+        <div class="meta-row">
+          <button type="button" class="link-btn" (click)="forgotPassword()">
+            ¿Olvidaste tu contraseña?
+          </button>
+        </div>
+
+        <p class="error" *ngIf="errorMsg" role="alert">{{ errorMsg }}</p>
+
+        <button type="submit" class="button primary full" [disabled]="loading">
+          <span *ngIf="!loading">Iniciar sesión</span>
+          <span *ngIf="loading" class="spinner" aria-label="Cargando"></span>
+        </button>
+
+      </form>
+
+      <footer class="form-footer">
+        <button type="button" class="button secondary sm" (click)="switchTheme()">
+          Cambiar a {{ getThemeService().current === 'light' ? 'oscuro' : 'claro' }}
+        </button>
+      </footer>
+
+    </div>
+  </main>
+
 </div>

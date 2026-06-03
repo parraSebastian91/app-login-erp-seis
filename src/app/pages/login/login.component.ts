@@ -1,12 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-
+import { Component } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { HttpErrorResponse } from '@angular/common/http';
 
 import { AuthService } from '../../service/auth.service';
 import { ThemeService } from '../../core/theming/theme.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { environment } from '../../../environments/environment';
-import { ConfigService } from '../../service/config.service';
 import { Router } from '@angular/router';
 
 
@@ -16,77 +13,57 @@ import { Router } from '@angular/router';
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
-export class LoginComponent implements OnInit {
-  title = 'app-login-erp-seis';
+export class LoginComponent {
   loading = false;
   errorMsg = '';
+  submitted = false;
+  showPassword = false;
+
   form: FormGroup;
 
   constructor(
     private authService: AuthService,
     private fb: FormBuilder,
     private themeService: ThemeService,
-    private _snackBar: MatSnackBar,
-    private config: ConfigService,
     private router: Router
   ) {
     this.form = this.fb.group({
-      // username: new FormControl('', [Validators.required, Validators.pattern('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$')]),
       username: ['', [Validators.required]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
-      // passRecovery: [''],
-      remember: [true]
+      password: ['', [Validators.required]],
     });
   }
 
-  ngOnInit(): void {
-    const params = new URLSearchParams(window.location.search);
-    const message = params.get('message') || params.get('msg');
-    const status = params.get('status');
-    if (message) {
-      this._snackBar.open(decodeURIComponent(message), 'Cerrar', {
-        duration: 5000, verticalPosition: 'top', horizontalPosition: 'center'
-      });
-    } else if (status === 'expired') {
-      this._snackBar.open('Sesión expirada. Inicie sesión nuevamente.', 'Cerrar', {
-        duration: 5000, verticalPosition: 'top', horizontalPosition: 'center'
-      });
-    }
-  }
-
+  get usernameCtrl() { return this.form.controls['username']; }
+  get passwordCtrl() { return this.form.controls['password']; }
 
   async login() {
-    if (!this.form.valid) {
-      this._snackBar.open('Complete los campos requeridos', 'Cerrar', {
-        duration: 5000, verticalPosition: 'top', horizontalPosition: 'center'
-      });
-      return;
-    }
+    this.submitted = true;
+    if (this.form.invalid) return;
 
     const { username, password } = this.form.value;
     this.loading = true;
+    this.errorMsg = '';
+
     try {
-      const url = await this.authService.loginWithEmailPassword(username, password);
-      console.log('response login component', url);
-      if (!url || url === 'about:blank') {
-        this._snackBar.open('Usuario o contraseña inválidos', 'Cerrar', {
-          duration: 5000, verticalPosition: 'top', horizontalPosition: 'center'
-        });
-      } else {
-        const base = this.config.getApiBase();
-        window.location.href = base + '/portal' + url;
-      }
+      const redirectUrl = await this.authService.loginWithEmailPassword(username, password);
+      window.location.href = redirectUrl;
     } catch (err) {
-      this._snackBar.open('Error al autenticar. Revise sus credenciales.', 'Cerrar', {
-        duration: 5000, verticalPosition: 'top', horizontalPosition: 'center'
-      });
-    } finally {
       this.loading = false;
+      const httpErr = err as HttpErrorResponse;
+      if (httpErr.status === 401 || httpErr.status === 403) {
+        this.errorMsg = 'Nombre de usuario o contraseña incorrectos.';
+      } else if (httpErr.status === 0) {
+        this.errorMsg = 'No se pudo conectar. Verifica tu conexión e intenta nuevamente.';
+      } else if (httpErr.status >= 500) {
+        this.errorMsg = 'Error del servidor. Intenta más tarde.';
+      } else {
+        this.errorMsg = 'Ocurrió un error inesperado. Intenta nuevamente.';
+      }
     }
   }
 
-  restablecerpassword() {
-    this.router.navigate(['pages','restablecer-password']);
+  forgotPassword() {
+    this.router.navigate(['pages', 'restablecer-password']);
   }
 
   getThemeService(): ThemeService {
@@ -96,5 +73,4 @@ export class LoginComponent implements OnInit {
   switchTheme() {
     this.themeService.toggle();
   }
-
 }

@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { Auth, GoogleAuthProvider, signInWithPopup, user } from '@angular/fire/auth';
 import { firstValueFrom, Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment';
 
 export interface LoginRequest {
   username: string;
@@ -33,41 +34,46 @@ export class AuthService {
   async loginWithGoogle() {
     try {
       const result = await signInWithPopup(this.auth, this.provider);
-      // El usuario ha iniciado sesión correctamente.
       const user = result.user;
       console.log('¡Usuario logueado!', user);
-      // Puedes redirigir al usuario ahora
     } catch (error) {
       console.error('Error al iniciar sesión con Google:', error);
-      // Maneja los errores (ej. ventana emergente cerrada, credenciales incorrectas)
     }
   }
 
-  async loginWithEmailPassword(username: string, password: string): Promise<any> {
+  /**
+   * HU-15: Flujo PKCE Paso 1.
+   * Genera sessionId + PKCE en memoria (nunca en storage).
+   * Devuelve la URL de redirect al Portal con ?code=...&sid=...
+   */
+  async loginWithEmailPassword(username: string, password: string): Promise<string> {
+    const sessionId = crypto.randomUUID();
 
-    const verifier = await this.generateCodeVerifier();
-    const challenge = await this.createCodeChallenge(verifier);
-    // guarda el verifier para el intercambio de tokens posterior
-    sessionStorage.setItem('pkce_verifier', verifier);
+    // 32 bytes aleatorios → base64url (Web Crypto API, sin librerías)
+    const verifierBytes = crypto.getRandomValues(new Uint8Array(32));
+    const code_verifier = this.base64urlEncode(verifierBytes.buffer);
+    const code_challenge = await this.createCodeChallenge(code_verifier);
 
     const authorizeBody = {
       username,
       password,
-      code_challenge: challenge,
-      typeDevice: this.detectDeviceType()
+      code_challenge,
+      typeDevice: this.detectDeviceType(),
+      sessionId,
     };
 
-    try {
-      const base = this.config.getApiBase(); // usa origen configurado
-      const res = await firstValueFrom(this.http.post<AuthenticateResponse>(`${base}/api/auth/security/authenticate`, authorizeBody));
-      console.log(res);
-      const url = (res.data && res.data.length && res.data[0].url) ? res.data[0].url : 'about:blank';
-      return url;
-    } catch (err) {
-      console.error('Error authenticating:');
-      console.error(err);
-      throw err;
+    const base = this.config.getApiBase();
+    const res = await firstValueFrom(
+      this.http.post<AuthenticateResponse>(`${base}/api/auth/security/authenticate`, authorizeBody)
+    );
+
+    const code = res.data?.[0]?.code;
+    if (!code) {
+      throw new Error('NO_CODE');
     }
+
+    const portalUrl = (environment as any).portalUrl ?? 'http://localhost:8083';
+    return `${portalUrl}/auth/callback?code=${encodeURIComponent(code)}&sid=${encodeURIComponent(sessionId)}`;
   }
 
   async validateEmail(correo: string): Promise<any> {
@@ -110,20 +116,7 @@ export class AuthService {
     }
   }
 
-  async generateCodeVerifier(length = 128): Promise<string> {
-    // PKCE requiere: 43-128 caracteres de unreserved characters [A-Z a-z 0-9 - . _ ~]
-    if (length < 43 || length > 128) {
-      length = 128;
-    }
-
-    const unreserved = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~';
-    const array = new Uint8Array(length);
-    crypto.getRandomValues(array);
-    const chars = Array.from(array).map((v) => unreserved[v % unreserved.length]);
-    return chars.join('');
-  }
-
-  base64urlEncode(buffer: ArrayBuffer) {
+  base64urlEncode(buffer: ArrayBuffer): string {
     const bytes = new Uint8Array(buffer);
     let str = '';
     for (let i = 0; i < bytes.byteLength; i++) {
@@ -132,23 +125,10 @@ export class AuthService {
     return btoa(str).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
   }
 
-  private hexToArrayBuffer(hex: string): ArrayBuffer {
-    const typed = new Uint8Array(hex.length / 2);
-    for (let i = 0; i < typed.length; i++) {
-      typed[i] = parseInt(hex.substring(i * 2, i * 2 + 2), 16);
-    }
-    return typed.buffer;
-  }
-
   async createCodeChallenge(verifier: string): Promise<string> {
-    try {
-      const data = new TextEncoder().encode(verifier);
-      const digest = await crypto.subtle.digest('SHA-256', data);
-      return this.base64urlEncode(digest);
-    } catch (error) {
-      console.error('Error generando code challenge:', error);
-      throw new Error('No se pudo generar el code challenge');
-    }
+    const data = new TextEncoder().encode(verifier);
+    const digest = await crypto.subtle.digest('SHA-256', data);
+    return this.base64urlEncode(digest);
   }
 
   private detectDeviceType(): LoginRequest['typeDevice'] {

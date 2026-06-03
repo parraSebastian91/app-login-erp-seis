@@ -8,8 +8,9 @@ export const environment = {
     //     appId: "1:641784311936:web:684fbb779da10a8bd3b665",
     //     measurementId: "G-XB5MQ25NSK"
     // }, 
-    production: false,
+    production: true,
     apiProtocol: 'https',
     apiPort: '8000',
+    portalUrl: 'https://app.DOMAIN',
 };
 
