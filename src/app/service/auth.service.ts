@@ -47,19 +47,23 @@ export class AuthService {
    * Devuelve la URL de redirect al Portal con ?code=...&sid=...
    */
   async loginWithEmailPassword(username: string, password: string): Promise<string> {
-    const sessionId = crypto.randomUUID();
+    const CorrelationId = crypto.randomUUID();
 
     // 32 bytes aleatorios → base64url (Web Crypto API, sin librerías)
     const verifierBytes = crypto.getRandomValues(new Uint8Array(32));
     const code_verifier = this.base64urlEncode(verifierBytes.buffer);
     const code_challenge = await this.createCodeChallenge(code_verifier);
 
+    sessionStorage.setItem('pkce_verifier', code_verifier);
+    // Puente temporal entre app-login (8082) y portal (8000): sessionStorage no se comparte entre puertos.
+    this.storePkceVerifierForPortal(CorrelationId, code_verifier);
+
     const authorizeBody = {
       username,
       password,
       code_challenge,
       typeDevice: this.detectDeviceType(),
-      sessionId,
+      CorrelationId,
     };
 
     const base = this.config.getApiBase();
@@ -72,8 +76,13 @@ export class AuthService {
       throw new Error('NO_CODE');
     }
 
-    const portalUrl = (environment as any).portalUrl ?? 'http://localhost:8083';
-    return `${portalUrl}/auth/callback?code=${encodeURIComponent(code)}&sid=${encodeURIComponent(sessionId)}`;
+    const portalUrl = (environment as any).portalUrl ?? 'http://localhost:8000';
+    return `${portalUrl}/auth/callback?code=${encodeURIComponent(code)}&cid=${encodeURIComponent(CorrelationId)}`;
+  }
+
+  private storePkceVerifierForPortal(correlationId: string, codeVerifier: string): void {
+    const payload = encodeURIComponent(JSON.stringify({ v: codeVerifier, ts: Date.now() }));
+    document.cookie = `seis_pkce_${correlationId}=${payload}; Max-Age=300; Path=/; SameSite=Lax`;
   }
 
   async validateEmail(correo: string): Promise<any> {

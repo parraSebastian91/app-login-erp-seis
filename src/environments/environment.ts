@@ -11,5 +11,5 @@ export const environment = {
     production: false,
     apiProtocol: 'http',
     apiPort: '8000',
-    portalUrl: 'http://localhost:8083',
+    portalUrl: 'http://localhost:8000/portal',
 };

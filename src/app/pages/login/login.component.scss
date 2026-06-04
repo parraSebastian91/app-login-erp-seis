@@ -135,7 +135,6 @@ form {
     font: inherit;
     color: var(--text);
     transition: border-color var(--transition-base), background 200ms;
-    width: 100%;
 
     &:focus-visible {
       outline: none;
