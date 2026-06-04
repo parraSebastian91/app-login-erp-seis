@@ -91,7 +91,7 @@ export class ForgotPasswordComponent implements OnDestroy {
       this.countdown--;
       if (this.countdown <= 0) {
         this.resendDisabled = false;
-        clearInterval(this.countdownInterval);
+        clearInterval(this.countdownInterval || undefined);
         this.countdownInterval = null;
       }
     }, 1000);
@@ -104,6 +104,6 @@ export class ForgotPasswordComponent implements OnDestroy {
   getThemeService(): ThemeService { return this.themeService; }
 
   ngOnDestroy(): void {
-    if (this.countdownInterval) clearInterval(this.countdownInterval);
+    if (this.countdownInterval) clearInterval(this.countdownInterval || undefined);
   }
 }
