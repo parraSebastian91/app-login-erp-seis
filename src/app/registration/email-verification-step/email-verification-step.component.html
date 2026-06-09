@@ -1,0 +1,38 @@
+<div class="verify-step" [class.is-loading]="loading()">
+  <div class="verify-step__icon" aria-hidden="true">
+    <span class="material-icons">mark_email_unread</span>
+  </div>
+
+  <h2 class="verify-step__title">Verifica tu email</h2>
+  <p class="verify-step__hint">
+    Enviamos un código de 6 dígitos a
+    <strong class="verify-step__email">{{ registrationData().email || 'tu correo' }}</strong>.
+  </p>
+
+  <app-otp-input (otpComplete)="onOtpComplete($event)" />
+
+  @if (loading()) {
+    <div class="verify-step__loader" role="status" aria-label="Verificando...">
+      <span class="material-icons verify-step__spinner" aria-hidden="true">refresh</span>
+    </div>
+  }
+
+  @if (error()) {
+    <p class="verify-step__error" role="alert">{{ error() }}</p>
+  }
+
+  <div class="verify-step__resend">
+    @if (resendCooldown() > 0) {
+      <span class="verify-step__cooldown">Reenviar en {{ resendCooldown() }}s</span>
+    } @else {
+      <button type="button" class="verify-step__resend-btn" (click)="onResend()">
+        ¿No llegó el código? Reenviar
+      </button>
+    }
+  </div>
+
+  <button type="button" class="verify-step__back" (click)="onBack()">
+    <span class="material-icons" aria-hidden="true">arrow_back</span>
+    Cambiar contraseña
+  </button>
+</div>

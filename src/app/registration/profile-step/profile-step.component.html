@@ -1,0 +1,95 @@
+<form class="step-form" [formGroup]="form" (ngSubmit)="onContinue()">
+  <h2 class="step-form__title">Crea tu perfil</h2>
+  <p class="step-form__subtitle">Con esto iniciarás sesión en la plataforma.</p>
+
+  <div class="step-form__field">
+    <label for="email" class="step-form__label">Correo electrónico</label>
+    <div class="step-form__input-wrap" [attr.data-state]="fieldState('email')">
+      <input
+        id="email"
+        type="email"
+        class="step-form__input"
+        formControlName="email"
+        placeholder="juan@empresa.cl"
+        autocomplete="email"
+        inputmode="email"
+        [attr.aria-invalid]="!!fieldError('email') || null"
+        [attr.aria-describedby]="fieldError('email') ? 'email-err' : null"
+      />
+      <span class="step-form__field-status" aria-hidden="true">
+        @switch (fieldState('email')) {
+          @case ('checking') {
+            <span class="material-icons step-form__status-icon step-form__status-icon--spin">refresh</span>
+          }
+          @case ('available') {
+            <span class="material-icons step-form__status-icon step-form__status-icon--ok">check_circle</span>
+          }
+          @case ('taken') {
+            <span class="material-icons step-form__status-icon step-form__status-icon--err">cancel</span>
+          }
+          @case ('invalid') {
+            <span class="material-icons step-form__status-icon step-form__status-icon--err">error_outline</span>
+          }
+        }
+      </span>
+    </div>
+    @if (fieldError('email')) {
+      <span class="step-form__error" id="email-err" role="alert">{{ fieldError('email') }}</span>
+    }
+  </div>
+
+  <div class="step-form__field">
+    <label for="username" class="step-form__label">Nombre de usuario</label>
+    <div class="step-form__input-at-row" [attr.data-state]="fieldState('username')">
+      <span class="step-form__at-prefix" aria-hidden="true">&#64;</span>
+      <input
+        id="username"
+        type="text"
+        class="step-form__input step-form__input--no-border"
+        formControlName="username"
+        placeholder="juan.perez_01"
+        autocomplete="username"
+        spellcheck="false"
+        [attr.aria-invalid]="!!fieldError('username') || null"
+        [attr.aria-describedby]="'username-hint' + (fieldError('username') ? ' username-err' : '')"
+      />
+      <span class="step-form__field-status" aria-hidden="true">
+        @switch (fieldState('username')) {
+          @case ('checking') {
+            <span class="material-icons step-form__status-icon step-form__status-icon--spin">refresh</span>
+          }
+          @case ('available') {
+            <span class="material-icons step-form__status-icon step-form__status-icon--ok">check_circle</span>
+          }
+          @case ('taken') {
+            <span class="material-icons step-form__status-icon step-form__status-icon--err">cancel</span>
+          }
+          @case ('invalid') {
+            <span class="material-icons step-form__status-icon step-form__status-icon--err">error_outline</span>
+          }
+        }
+      </span>
+    </div>
+    @if (fieldError('username')) {
+      <span class="step-form__error" id="username-err" role="alert">{{ fieldError('username') }}</span>
+    }
+    <span class="step-form__hint" id="username-hint">
+      Letras, números, puntos (<code>.</code>), guiones (<code>-</code>) y guión bajo (<code>_</code>). Entre 3 y 30 caracteres.
+    </span>
+  </div>
+
+  <div class="step-form__actions">
+    <button type="button" class="step-form__btn step-form__btn--back" (click)="onBack()">
+      <span class="material-icons" aria-hidden="true">arrow_back</span>
+      Atrás
+    </button>
+    <button
+      type="submit"
+      class="step-form__btn step-form__btn--primary"
+      [disabled]="!canContinue"
+    >
+      Continuar
+      <span class="material-icons" aria-hidden="true">arrow_forward</span>
+    </button>
+  </div>
+</form>

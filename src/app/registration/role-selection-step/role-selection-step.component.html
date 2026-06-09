@@ -1,0 +1,37 @@
+<div class="role-step">
+  <h1 class="role-step__title">¿Qué describe mejor tu situación?</h1>
+  <p class="role-step__hint">Esta elección es permanente y define cómo usarás la plataforma.</p>
+
+  <div class="role-step__cards">
+    <button
+      type="button"
+      class="role-card"
+      [class.is-selected]="selected() === 'CEDENTE'"
+      (click)="onSelect('CEDENTE')"
+      [attr.aria-pressed]="selected() === 'CEDENTE'"
+    >
+      <span class="material-icons role-card__icon" aria-hidden="true">business</span>
+      <strong class="role-card__title">Soy empresa cedente</strong>
+      <span class="role-card__desc">Vendo facturas y busco financiamiento</span>
+    </button>
+
+    <button
+      type="button"
+      class="role-card"
+      [class.is-selected]="selected() === 'EJECUTIVO'"
+      (click)="onSelect('EJECUTIVO')"
+      [attr.aria-pressed]="selected() === 'EJECUTIVO'"
+    >
+      <span class="material-icons role-card__icon" aria-hidden="true">account_balance</span>
+      <strong class="role-card__title">Soy ejecutivo de financiera</strong>
+      <span class="role-card__desc">Ofrezco financiamiento a empresas</span>
+    </button>
+  </div>
+
+  @if (selected()) {
+    <button type="button" class="role-step__continue" (click)="onContinue()">
+      Continuar
+      <span class="material-icons" aria-hidden="true">arrow_forward</span>
+    </button>
+  }
+</div>

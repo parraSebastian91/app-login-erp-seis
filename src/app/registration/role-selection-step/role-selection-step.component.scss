@@ -1,0 +1,95 @@
+.role-step {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.role-step__title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-text-primary, #e6edf3);
+  margin: 0;
+}
+
+.role-step__hint {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary, #8b949e);
+  margin: -16px 0 0;
+}
+
+.role-step__cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.role-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 28px 20px;
+  border: 2px solid var(--color-border, rgba(255,255,255,0.10));
+  border-radius: 14px;
+  background: var(--color-bg-surface, #161b22);
+  cursor: pointer;
+  text-align: center;
+  transition: border-color 0.2s, background 0.2s, transform 0.1s;
+
+  &:hover {
+    border-color: var(--color-brand-primary, #00bfa5);
+    background: color-mix(in srgb, var(--color-brand-primary, #00bfa5) 8%, var(--color-bg-surface, #161b22));
+  }
+
+  &:active { transform: scale(0.97); }
+
+  &.is-selected {
+    border-color: var(--color-brand-primary, #00bfa5);
+    background: color-mix(in srgb, var(--color-brand-primary, #00bfa5) 14%, var(--color-bg-surface, #161b22));
+  }
+}
+
+.role-card__icon {
+  font-size: 40px;
+  color: var(--color-brand-primary, #00bfa5);
+}
+
+.role-card__title {
+  font-size: 0.95rem;
+  color: var(--color-text-primary, #e6edf3);
+}
+
+.role-card__desc {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary, #8b949e);
+}
+
+.role-step__continue {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 28px;
+  border: none;
+  border-radius: 10px;
+  background: var(--color-brand-primary, #00bfa5);
+  color: var(--color-brand-on-primary, #0d1117);
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  animation: fade-in 0.2s ease;
+
+  &:hover { opacity: 0.9; }
+
+  .material-icons { font-size: 20px; }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

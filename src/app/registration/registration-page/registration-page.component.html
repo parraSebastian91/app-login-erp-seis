@@ -1,0 +1,65 @@
+<div class="reg-layout">
+  <!-- Header -->
+  <header class="reg-header">
+    <a routerLink="/pages/login" class="reg-header__back" aria-label="Volver al inicio de sesión">
+      <span class="material-icons" aria-hidden="true">arrow_back</span>
+    </a>
+    <span class="reg-header__logo">SEIS</span>
+    <div class="reg-header__spacer" aria-hidden="true"></div>
+  </header>
+
+  <!-- Progress -->
+  @if (currentStep() > 0) {
+    <nav class="reg-progress" aria-label="Progreso de registro">
+      @for (label of stepLabels; track $index) {
+        <div class="reg-progress__step"
+             [class.is-done]="$index < currentStep() - 1"
+             [class.is-active]="$index === currentStep() - 1"
+             [attr.aria-current]="$index === currentStep() - 1 ? 'step' : null">
+          <div class="reg-progress__dot">
+            @if ($index < currentStep()) {
+              <span class="material-icons" aria-hidden="true">check</span>
+            } @else {
+              {{ $index + 1 }}
+            }
+          </div>
+          <span class="reg-progress__label">{{ label }}</span>
+        </div>
+        @if ($index < stepLabels.length - 1) {
+          <div class="reg-progress__line" [class.is-done]="$index < currentStep() - 1"></div>
+        }
+      }
+    </nav>
+  }
+
+  <!-- Step container -->
+  <main class="reg-main">
+    @if (resumeLoading()) {
+      <div class="reg-resume-loader" role="status" aria-live="polite">
+        <span class="material-icons reg-resume-loader__icon" aria-hidden="true">refresh</span>
+        Enviando código de verificación…
+      </div>
+    }
+    @if (resumeError()) {
+      <div class="reg-resume-error" role="alert">
+        <span class="material-icons" aria-hidden="true">error_outline</span>
+        {{ resumeError() }}
+      </div>
+    }
+    <div class="reg-card">
+      @switch (currentStep()) {
+        @case (0) { <app-role-selection-step /> }
+        @case (1) { <app-profile-step /> }
+        @case (2) { <app-personal-data-step /> }
+        @case (3) { <app-credentials-step /> }
+        @case (4) { <app-email-verification-step /> }
+      }
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="reg-footer">
+    ¿Ya tienes cuenta?
+    <a routerLink="/pages/login" class="reg-footer__link">Inicia sesión</a>
+  </footer>
+</div>

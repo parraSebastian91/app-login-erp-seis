@@ -1,0 +1,219 @@
+.step-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.step-form__title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--color-text-primary, #e6edf3);
+  margin: 0;
+}
+
+.step-form__subtitle {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary, #8b949e);
+  margin: -14px 0 0;
+}
+
+.step-form__field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.step-form__label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--color-text-secondary, #8b949e);
+}
+
+.step-form__input {
+  padding: 10px 14px;
+  border: 1px solid var(--color-border, rgba(255, 255, 255, 0.12));
+  border-radius: 8px;
+  background: var(--color-bg-elevated, rgba(255, 255, 255, 0.04));
+  color: var(--color-text-primary, #e6edf3);
+  font-family: var(--font-sans, sans-serif);
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s;
+  width: 100%;
+  box-sizing: border-box;
+
+  &::placeholder { color: var(--color-text-disabled, #4d5566); }
+
+  &:focus {
+    border-color: var(--color-brand-primary, #00bfa5);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-brand-primary, #00bfa5) 20%, transparent);
+  }
+
+  &[aria-invalid='true'] { border-color: var(--color-error, #ef4444); }
+}
+
+/* Input with @ prefix (username) */
+.step-form__input-at-row {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--color-border, rgba(255, 255, 255, 0.12));
+  border-radius: 8px;
+  background: var(--color-bg-elevated, rgba(255, 255, 255, 0.04));
+  overflow: hidden;
+  transition: border-color 0.2s;
+
+  &:focus-within {
+    border-color: var(--color-brand-primary, #00bfa5);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-brand-primary, #00bfa5) 20%, transparent);
+  }
+}
+
+.step-form__at-prefix {
+  padding: 10px 12px;
+  font-family: var(--font-mono, monospace);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-brand-primary, #00bfa5);
+  border-right: 1px solid var(--color-border, rgba(255, 255, 255, 0.10));
+  background: var(--color-bg-surface, #161b22);
+  flex-shrink: 0;
+  user-select: none;
+}
+
+.step-form__input--no-border {
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  flex: 1;
+
+  &:focus { box-shadow: none; }
+}
+
+.step-form__error {
+  font-size: 0.75rem;
+  color: var(--color-error, #ef4444);
+}
+
+.step-form__hint {
+  font-size: 0.75rem;
+  color: var(--color-text-disabled, #4d5566);
+  line-height: 1.4;
+
+  code {
+    font-family: var(--font-mono, monospace);
+    background: rgba(255, 255, 255, 0.06);
+    padding: 1px 4px;
+    border-radius: 3px;
+  }
+}
+
+.step-form__actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.step-form__btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: opacity 0.2s;
+
+  .material-icons { font-size: 18px; }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+.step-form__btn--primary {
+  flex: 1;
+  justify-content: center;
+  background: var(--color-brand-primary, #00bfa5);
+  color: var(--color-brand-on-primary, #0d1117);
+
+  &:hover:not(:disabled) { opacity: 0.9; }
+}
+
+.step-form__btn--back {
+  background: transparent;
+  color: var(--color-text-secondary, #8b949e);
+  border: 1px solid var(--color-border, rgba(255, 255, 255, 0.12));
+
+  &:hover { background: var(--color-bg-elevated, rgba(255, 255, 255, 0.05)); }
+}
+
+/* ── Field status (async validation) ─────────────────── */
+
+/** Wrapper that makes the status icon absolutley positioned inside */
+.step-form__input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  .step-form__input { padding-right: 42px; }
+
+  &[data-state='available'] .step-form__input {
+    border-color: var(--color-success, #22c55e);
+  }
+  &[data-state='taken'] .step-form__input,
+  &[data-state='invalid'] .step-form__input {
+    border-color: var(--color-error, #ef4444);
+  }
+}
+
+/** Status icon inside the @ row — lives at flex end */
+.step-form__input-at-row {
+  &[data-state='available'] {
+    border-color: var(--color-success, #22c55e);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-success, #22c55e) 15%, transparent);
+  }
+  &[data-state='taken'],
+  &[data-state='invalid'] {
+    border-color: var(--color-error, #ef4444);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-error, #ef4444) 15%, transparent);
+  }
+}
+
+.step-form__field-status {
+  /* For .input-wrap: absolute on the right */
+  .step-form__input-wrap & {
+    position: absolute;
+    right: 12px;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+  }
+
+  /* For .input-at-row: flex child at the end, with padding */
+  .step-form__input-at-row & {
+    padding: 0 10px;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+}
+
+.step-form__status-icon {
+  font-size: 18px;
+  line-height: 1;
+
+  &--ok   { color: var(--color-success, #22c55e); }
+  &--err  { color: var(--color-error, #ef4444); }
+  &--spin {
+    color: var(--color-brand-primary, #00bfa5);
+    animation: status-spin 0.7s linear infinite;
+  }
+}
+
+@keyframes status-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}

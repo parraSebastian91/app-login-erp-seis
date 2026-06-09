@@ -1,0 +1,128 @@
+<form class="step-form" [formGroup]="form" (ngSubmit)="onContinue()">
+  <h2 class="step-form__title">Datos personales</h2>
+
+
+
+  <!-- Nombre  -->
+  <div class="step-form__field">
+
+    <label for="nombres" class="step-form__label">Nombres</label>
+    <input id="nombres" type="text" class="step-form__input" formControlName="nombres" placeholder="Juan Pedro"
+      autocomplete="given-name" [attr.aria-invalid]="!!fieldError('nombres') || null" />
+    @if (fieldError('nombres')) {
+    <span class="step-form__error" role="alert">{{ fieldError('nombres') }}</span>
+    }
+
+
+  </div>
+
+  <!--  Apellido paterno + Apellido materno (opcional) -->
+  <div class="step-form__row">
+    <div class="step-form__field">
+      <label for="apellidoPaterno" class="step-form__label">Apellido paterno</label>
+      <input id="apellidoPaterno" type="text" class="step-form__input" formControlName="apellidoPaterno"
+        placeholder="Pérez" autocomplete="family-name" [attr.aria-invalid]="!!fieldError('apellidoPaterno') || null" />
+      @if (fieldError('apellidoPaterno')) {
+      <span class="step-form__error" role="alert">{{ fieldError('apellidoPaterno') }}</span>
+      }
+    </div>
+    <div class="step-form__field">
+      <label for="apellidoMaterno" class="step-form__label">
+        Apellido materno
+        <span class="step-form__optional">(opcional)</span>
+      </label>
+      <input id="apellidoMaterno" type="text" class="step-form__input" formControlName="apellidoMaterno"
+        placeholder="González" autocomplete="additional-name" />
+    </div>
+  </div>
+
+
+  <!-- Teléfono con prefijo de país -->
+  <div class="step-form__field">
+    <label for="telefono" class="step-form__label">Teléfono de contacto</label>
+    <div class="step-form__phone-row">
+      <select class="step-form__phone-prefix-select" formControlName="prefijoTelefono" aria-label="Prefijo de país">
+        @for (p of PHONE_PREFIXES; track p.code) {
+        <option [value]="p.code">{{ p.label }}</option>
+        }
+      </select>
+      <input id="telefono" type="tel" class="step-form__input step-form__input--phone" formControlName="telefono"
+        placeholder="912345678" inputmode="numeric" autocomplete="tel-national"
+        [attr.aria-invalid]="!!fieldError('telefono') || null" />
+    </div>
+    @if (fieldError('telefono')) {
+    <span class="step-form__error" role="alert">{{ fieldError('telefono') }}</span>
+    }
+  </div>
+
+  <!-- Tipo de documento + Número de documento -->
+  <div class="step-form__row">
+    <div class="step-form__field">
+      <label for="tipoDocumento" class="step-form__label">Tipo de documento</label>
+      <select id="tipoDocumento" class="step-form__input step-form__select" formControlName="tipoDocumento"
+        (change)="onTipoDocChange()">
+        <option value="RUT">RUT</option>
+        <option value="CDI">Cédula de Identidad</option>
+        <option value="PASAPORTE">Pasaporte</option>
+      </select>
+    </div>
+
+    <div class="step-form__field">
+      <label for="numeroDoc" class="step-form__label">
+        {{ isCedula ? 'RUT' : 'Número de pasaporte' }}
+      </label>
+      @if (isCedula) {
+      <app-rut-input inputId="numeroDoc" name="numeroDoc" placeholder="Ej: 12.345.678-9" [value]="docValue()"
+        (valueChange)="onDocChange($event)" (validChange)="onDocValidChange($event)" />
+      } @else {
+      <input id="numeroDoc" type="text" class="step-form__input" placeholder="Ej: AB1234567" [value]="docValue()"
+        (input)="onDocumentoInput($event)" spellcheck="false"
+        [attr.aria-invalid]="!docValid() && docValue().length > 0 ? true : null" />
+      }
+    </div>
+  </div>
+
+  <!-- País de residencia + Fecha de nacimiento -->
+  <div class="step-form__row">
+    <div class="step-form__field">
+      <label for="pais" class="step-form__label">País de residencia</label>
+      <select id="pais" class="step-form__input step-form__select" formControlName="pais">
+        @for (c of PAISES; track c.code) {
+        <option [value]="c.code">{{ c.name }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="step-form__field">
+      <label for="fechaNacimiento" class="step-form__label">Fecha de nacimiento</label>
+      <input id="fechaNacimiento" type="date" class="step-form__input" formControlName="fechaNacimiento"
+        [max]="maxFechaNacimiento" [attr.aria-invalid]="!!fieldError('fechaNacimiento') || null" />
+      @if (fieldError('fechaNacimiento')) {
+      <span class="step-form__error" role="alert">{{ fieldError('fechaNacimiento') }}</span>
+      }
+    </div>
+  </div>
+
+  <!-- Dirección -->
+  <div class="step-form__field">
+    <label for="direccion" class="step-form__label">Dirección</label>
+    <input id="direccion" type="text" class="step-form__input" formControlName="direccion"
+      placeholder="Av. Providencia 1234, Santiago" autocomplete="street-address"
+      [attr.aria-invalid]="!!fieldError('direccion') || null" />
+    @if (fieldError('direccion')) {
+    <span class="step-form__error" role="alert">{{ fieldError('direccion') }}</span>
+    }
+  </div>
+
+  <!-- Acciones -->
+  <div class="step-form__actions">
+    <button type="button" class="step-form__btn step-form__btn--back" (click)="onBack()">
+      <span class="material-icons" aria-hidden="true">arrow_back</span>
+      Atrás
+    </button>
+    <button type="submit" class="step-form__btn step-form__btn--primary" [disabled]="!canContinue">
+      Continuar
+      <span class="material-icons" aria-hidden="true">arrow_forward</span>
+    </button>
+  </div>
+</form>

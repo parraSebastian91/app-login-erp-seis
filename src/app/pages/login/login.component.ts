@@ -59,6 +59,21 @@ export class LoginComponent implements OnInit {
     } catch (err) {
       this.loading = false;
       const httpErr = err as HttpErrorResponse;
+
+      // Backend signals that the account exists but email is not yet verified.
+      // Redirect to the OTP step with the email as a query param so the wizard
+      // can auto-send a fresh code without requiring the user to re-fill the form.
+      if (
+        (httpErr.status === 403 || httpErr.status === 401) &&
+        httpErr.error?.code === 'EMAIL_NOT_VERIFIED'
+      ) {
+        const pendingEmail: string = httpErr.error?.email ?? username;
+        this.router.navigate(['/registro'], {
+          queryParams: { verify: pendingEmail },
+        });
+        return;
+      }
+
       if (httpErr.status === 401 || httpErr.status === 403) {
         this.errorMsg = 'Nombre de usuario o contraseña incorrectos.';
       } else if (httpErr.status === 0) {
