@@ -8,7 +8,7 @@ RUN npm ci --legacy-peer-deps && \
     rm -rf node_modules/esbuild node_modules/@esbuild && \
     npm install esbuild --force --legacy-peer-deps
 
-COPY . . 
+COPY . .
 RUN rm -rf node_modules/.cache && \
     rm -rf node_modules/.vite && \
     npm run build -- --configuration production
@@ -47,9 +47,12 @@ RUN chmod -R 755 /usr/share/nginx/html && \
 
 RUN nginx -t
 
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
 EXPOSE 80
 
 HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
   CMD wget --quiet --tries=1 --spider http://localhost/ || exit 1
 
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["/entrypoint.sh"]

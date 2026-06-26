@@ -47,7 +47,7 @@ export class AuthService {
    * Devuelve la URL de redirect al Portal con ?code=...&sid=...
    */
   async loginWithEmailPassword(username: string, password: string): Promise<string> {
-    const CorrelationId = crypto.randomUUID();
+    const CorrelationId = this.generateUUID();
 
     // 32 bytes aleatorios → base64url (Web Crypto API, sin librerías)
     const verifierBytes = crypto.getRandomValues(new Uint8Array(32));
@@ -135,9 +135,63 @@ export class AuthService {
   }
 
   async createCodeChallenge(verifier: string): Promise<string> {
-    const data = new TextEncoder().encode(verifier);
-    const digest = await crypto.subtle.digest('SHA-256', data);
-    return this.base64urlEncode(digest);
+    if (typeof crypto !== 'undefined' && crypto.subtle) {
+      const data = new TextEncoder().encode(verifier);
+      const digest = await crypto.subtle.digest('SHA-256', data);
+      return this.base64urlEncode(digest);
+    }
+    // Fallback para contextos HTTP (no-localhost): SHA-256 puro en JS
+    const hexHash = this.sha256Sync(verifier);
+    const bytes = new Uint8Array(hexHash.match(/../g)!.map(h => parseInt(h, 16)));
+    return this.base64urlEncode(bytes.buffer);
+  }
+
+  /** UUID v4 con fallback para contextos HTTP sin crypto.randomUUID */
+  private generateUUID(): string {
+    if (typeof crypto !== 'undefined' && typeof (crypto as any).randomUUID === 'function') {
+      return (crypto as any).randomUUID();
+    }
+    // crypto.getRandomValues sí está disponible en HTTP
+    const bytes = new Uint8Array(16);
+    crypto.getRandomValues(bytes);
+    bytes[6] = (bytes[6] & 0x0f) | 0x40;
+    bytes[8] = (bytes[8] & 0x3f) | 0x80;
+    const h = Array.from(bytes).map(b => b.toString(16).padStart(2, '0'));
+    return `${h.slice(0,4).join('')}-${h.slice(4,6).join('')}-${h.slice(6,8).join('')}-${h.slice(8,10).join('')}-${h.slice(10).join('')}`;
+  }
+
+  /** SHA-256 puro JS para contextos HTTP (verifier es siempre ASCII base64url) */
+  private sha256Sync(ascii: string): string {
+    const rr = (v: number, a: number) => (v >>> a) | (v << (32 - a));
+    const mw = 2 ** 32;
+    const h: number[] = [], k: number[] = [];
+    const ic: Record<number, number> = {};
+    for (let c = 2, p = 0; p < 64; c++) {
+      if (!ic[c]) {
+        for (let i = 0; i < 313; i += c) ic[i] = c;
+        h[p] = (Math.pow(c, 0.5) * mw) | 0;
+        k[p++] = (Math.pow(c, 1 / 3) * mw) | 0;
+      }
+    }
+    let msg = ascii + '\x80';
+    while (msg.length % 64 - 56) msg += '\x00';
+    const w: number[] = [];
+    for (let i = 0; i < msg.length; i++) w[i >> 2] |= msg.charCodeAt(i) << ((3 - i) % 4) * 8;
+    w.push((ascii.length * 8 / mw) | 0, ascii.length * 8);
+    for (let j = 0; j < w.length;) {
+      const chunk = w.slice(j, j += 16);
+      const oh = [...h];
+      h.splice(0, h.length, ...h.slice(0, 8));
+      for (let i = 0; i < 64; i++) {
+        const w15 = chunk[i - 15], w2 = chunk[i - 2];
+        const t1 = h[7] + (rr(h[4],6)^rr(h[4],11)^rr(h[4],25)) + ((h[4]&h[5])^(~h[4]&h[6])) + k[i]
+          + (chunk[i] = i < 16 ? chunk[i] : (chunk[i-16]+(rr(w15,7)^rr(w15,18)^(w15>>>3))+chunk[i-7]+(rr(w2,17)^rr(w2,19)^(w2>>>10)))|0);
+        const t2 = (rr(h[0],2)^rr(h[0],13)^rr(h[0],22)) + ((h[0]&h[1])^(h[0]&h[2])^(h[1]&h[2]));
+        h.unshift((t1+t2)|0); h[4]=(h[4]+t1)|0; h.length=8;
+      }
+      h.forEach((v, i) => h[i] = (v + oh[i]) | 0);
+    }
+    return h.map(v => v.toString(16).padStart(8, '0')).join('');
   }
 
   private detectDeviceType(): LoginRequest['typeDevice'] {
