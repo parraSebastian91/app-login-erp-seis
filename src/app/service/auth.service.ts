@@ -76,7 +76,7 @@ export class AuthService {
       throw new Error('NO_CODE');
     }
 
-    const portalUrl = (environment as any).portalUrl ?? 'http://localhost:8000';
+    const portalUrl = (environment as any).portalUrl ?? 'http://localhost:8000/portal';
     return `${portalUrl}/auth/callback?code=${encodeURIComponent(code)}&cid=${encodeURIComponent(CorrelationId)}`;
   }
 
@@ -191,7 +191,7 @@ export class AuthService {
       }
       h.forEach((v, i) => h[i] = (v + oh[i]) | 0);
     }
-    return h.map(v => v.toString(16).padStart(8, '0')).join('');
+    return h.map(v => (v >>> 0).toString(16).padStart(8, '0')).join('');
   }
 
   private detectDeviceType(): LoginRequest['typeDevice'] {

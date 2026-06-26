@@ -12,6 +12,6 @@ export const environment = {
     apiProtocol: 'http',
     apiPort: '8000',
     get portalUrl(): string {
-        return (window as any).__env?.PORTAL_URL || 'http://localhost:8083';
+        return (window as any).__env?.PORTAL_URL || 'http://localhost:8000/portal';
     },
 };
