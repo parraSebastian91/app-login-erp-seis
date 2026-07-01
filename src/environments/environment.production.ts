@@ -1,18 +1,27 @@
 export const environment = {
-    // firebaseConfig: {
-    //     apiKey: "AIzaSyCfVbHwBV-gm9PnJTONV0sWLzwlqWzteeA",
-    //     authDomain: "login-erp-seis.firebaseapp.com",
-    //     projectId: "login-erp-seis",
-    //     storageBucket: "login-erp-seis.firebasestorage.app",
-    //     messagingSenderId: "641784311936",
-    //     appId: "1:641784311936:web:684fbb779da10a8bd3b665",
-    //     measurementId: "G-XB5MQ25NSK"
-    // },
-    production: true,
-    apiProtocol: 'http',
-    apiPort: '8000',
-    get portalUrl(): string {
-        return (window as any).__env?.PORTAL_URL || 'http://localhost:8000/portal';
+    nameApp: 'Flowis',
+    BFF: '/api/bff',
+    msAuth: '/api/auth/security',
+    // Ruta de login relativa al origen servido por Kong
+    appLogin: '/pages/login',
+    /**
+     * Construye una URL absoluta usando window.__env (runtime) o localhost:8000 como fallback.
+     * Requiere que index.html cargue assets/env-config.js con window.__env seteado.
+     * Solo necesario cuando la URL debe salir del dominio actual (ej: redirecciones cross-origin).
+     */
+    getEndpoint(path = ''): string {
+        const protocol = (window as any).__env?.HOST_PROTOCOL || 'http';
+        const host = (window as any).__env?.HOST_LAN_IP;
+        const port = (window as any).__env?.KONG_PROXY_PORT;
+        const base = `${protocol}://${host}:${port}`;
+        if (!path) return base;
+        return `${base}/${path.replace(/^\//, '')}`;
     },
+    getBaseUrl(): string {
+        const protocol = (window as any).__env?.HOST_PROTOCOL || 'http';
+        const host = (window as any).__env?.HOST_LAN_IP;
+        const port = (window as any).__env?.KONG_PROXY_PORT;
+        return `${protocol}://${host}:${port}`;
+    },
+    enableDevLogs: false
 };
-

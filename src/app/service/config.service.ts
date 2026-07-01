@@ -36,11 +36,7 @@ export class ConfigService {
   }
 
   getApiBase(path = ''): string {
-    // Prioridad: window.__env.API_BASE_URL (inyectado por entrypoint.sh) > window.location
-    const envBase = (window as any).__env?.API_BASE_URL;
-    const base = (envBase && envBase.trim()) ? envBase.replace(/\/$/, '') : this.getOrigin();
-    if (!path) return base;
-    return `${base}/${path.replace(/^\//, '')}`;
+    return environment.getEndpoint(path);
   }
 
   // Helpers para pruebas desde otro dispositivo

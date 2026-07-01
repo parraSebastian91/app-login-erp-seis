@@ -1,17 +1,35 @@
 export const environment = {
-    // firebaseConfig: {
-    //     apiKey: "AIzaSyCfVbHwBV-gm9PnJTONV0sWLzwlqWzteeA",
-    //     authDomain: "login-erp-seis.firebaseapp.com",
-    //     projectId: "login-erp-seis",
-    //     storageBucket: "login-erp-seis.firebasestorage.app",
-    //     messagingSenderId: "641784311936",
-    //     appId: "1:641784311936:web:684fbb779da10a8bd3b665",
-    //     measurementId: "G-XB5MQ25NSK"
-    // },
-    production: false,
-    apiProtocol: 'http',
-    apiPort: '8000',
-    get portalUrl(): string {
-        return (window as any).__env?.PORTAL_URL || 'http://localhost:8000/portal';
+    nameApp: 'Factor',
+    BFF: '/api/bff',
+    msAuth: '/api/auth/security',
+    appLogin: '/pages/login',
+
+    /**
+     * URL base de Kong inyectada en runtime via window.__env.API_BASE_URL (desde entrypoint.sh).
+     * Ejemplo: http://192.168.3.10:8000
+     * Sin env.js ó en desarrollo local: fallback a localhost:8000.
+     */
+    getBaseUrl(): string {
+        const injected = (window as any).__env?.API_BASE_URL;
+        if (injected) return injected.replace(/\/$/, '');
+        const protocol = (window as any).__env?.HOST_PROTOCOL || 'http';
+        const host     = (window as any).__env?.HOST_LAN_IP    || 'localhost';
+        const port     = (window as any).__env?.KONG_PROXY_PORT || '8000';
+        return `${protocol}://${host}:${port}`;
     },
+
+    getEndpoint(path = ''): string {
+        const base = environment.getBaseUrl();
+        if (!path) return base;
+        return `${base}/${path.replace(/^\//, '')}`;
+    },
+
+    /** URL del Portal a la que redirige tras login exitoso (inyectada desde PORTAL_URL) */
+    get portalUrl(): string {
+        return (window as any).__env?.PORTAL_URL
+            || `${environment.getBaseUrl()}/portal`;
+    },
+
+    enableDevLogs: false
 };
+

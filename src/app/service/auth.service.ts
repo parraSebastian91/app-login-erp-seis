@@ -66,7 +66,7 @@ export class AuthService {
       CorrelationId,
     };
 
-    const base = this.config.getApiBase();
+    const base = environment.getBaseUrl();
     const res = await firstValueFrom(
       this.http.post<AuthenticateResponse>(`${base}/api/auth/security/authenticate`, authorizeBody)
     );
@@ -76,7 +76,7 @@ export class AuthService {
       throw new Error('NO_CODE');
     }
 
-    const portalUrl = (environment as any).portalUrl ?? 'http://localhost:8000/portal';
+    const portalUrl = (environment as any).portalUrl;
     return `${portalUrl}/auth/callback?code=${encodeURIComponent(code)}&cid=${encodeURIComponent(CorrelationId)}`;
   }
 
@@ -86,7 +86,8 @@ export class AuthService {
   }
 
   async validateEmail(correo: string): Promise<any> {
-    const requestChangePAssword = this.http.post<any>(`${this.config.getApiBase()}/api/auth/security/password-reset/request`, { correo });
+    const base = environment.getBaseUrl();
+    const requestChangePAssword = this.http.post<any>(`${base}/api/auth/security/password-reset/request`, { correo });
     try {
       const res = await firstValueFrom(requestChangePAssword);
       console.log(res);
@@ -100,7 +101,8 @@ export class AuthService {
   }
 
   async resetPassword(body: any): Promise<any> {
-    const resetPasswordRequest = this.http.post<any>(`${this.config.getApiBase()}/api/auth/security/password-reset/reset`, body);
+    const base = environment.getBaseUrl();
+    const resetPasswordRequest = this.http.post<any>(`${base}/api/auth/security/password-reset/reset`, body);
     try {
       const res = await firstValueFrom(resetPasswordRequest);
       console.log(res);
@@ -113,8 +115,9 @@ export class AuthService {
   }
 
   async validateToken(token: string, sessionId: string): Promise<any> {
+    const base = environment.getBaseUrl();
     try {
-      const validateTokenRequest = this.http.get<any>(`${this.config.getApiBase()}/api/auth/security/password-reset/validate?token=${encodeURIComponent(token)}&uuid=${encodeURIComponent(sessionId)}`);
+      const validateTokenRequest = this.http.get<any>(`${base}/api/auth/security/password-reset/validate?token=${encodeURIComponent(token)}&uuid=${encodeURIComponent(sessionId)}`);
       const res = await firstValueFrom(validateTokenRequest);
       console.log(res);
       return res;
