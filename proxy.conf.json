@@ -1,0 +1,14 @@
+{
+  "/api/auth": {
+    "target": "http://192.168.3.30:2000",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  },
+  "/api/core": {
+    "target": "http://192.168.3.30:2001",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  }
+}

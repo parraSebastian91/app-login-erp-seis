@@ -8,8 +8,7 @@ import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { provideAuth, getAuth } from '@angular/fire/auth';
 import { environment } from '../environments/environment';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { CorsInterceptor } from './interceptors/cors.interceptor';
+import { HttpClientModule } from '@angular/common/http';
 import { RestablecerPasswordComponent } from './pages/restablecer-password/restablecer-password.component';
 
 @NgModule({
@@ -27,17 +26,12 @@ import { RestablecerPasswordComponent } from './pages/restablecer-password/resta
       projectId: "login-erp-seis", 
       appId: "1:641784311936:web:684fbb779da10a8bd3b665", 
       storageBucket: "login-erp-seis.firebasestorage.app", 
-      apiKey: "AIzaSyCfVbHwBV-gm9PnJTONV0sWLzwlqWzteeA", 
+      apiKey: "«reda...…»", 
       authDomain: "login-erp-seis.firebaseapp.com", 
       messagingSenderId: "641784311936", 
       measurementId: "G-XB5MQ25NSK" }
     )),
-    provideAuth(() => getAuth()),
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: CorsInterceptor,
-      multi: true
-    }
+    provideAuth(() => getAuth())
   ],
   bootstrap: [AppComponent]
 })
