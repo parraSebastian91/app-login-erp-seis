@@ -1,7 +1,7 @@
 export const environment = {
-    nameApp: 'Factor',
+    nameApp: 'Flowis',
     BFF: '/api/bff',
-    msAuth: '/api/auth/security',
+    msAuth: '/api/auth',
     appLogin: '/pages/login',
 
     /**
@@ -13,8 +13,8 @@ export const environment = {
         const injected = (window as any).__env?.API_BASE_URL;
         if (injected) return injected.replace(/\/$/, '');
         const protocol = (window as any).__env?.HOST_PROTOCOL || 'http';
-        const host     = (window as any).__env?.HOST_LAN_IP    || 'localhost';
-        const port     = (window as any).__env?.KONG_PROXY_PORT || '8000';
+        const host     = (window as any).__env?.HOST_LAN_IP    || '192.168.3.30';
+        const port     = (window as any).__env?.PROXY_PORT || '8000';
         return `${protocol}://${host}:${port}`;
     },
 

@@ -177,3 +177,5 @@ Thumbs.db
 .yarn/cache/
 .pnpm-store/
 pnpm-lock.yaml.backup
+
+.env

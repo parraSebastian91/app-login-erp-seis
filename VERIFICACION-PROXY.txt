@@ -1,0 +1,81 @@
+═══════════════════════════════════════════════════════════════
+  VERIFICACIÓN COMPLETA - proxy.conf.json
+═══════════════════════════════════════════════════════════════
+
+📅 Fecha: 2026-07-30
+🎯 Objetivo: Resolver CORS policy error en desarrollo local
+
+───────────────────────────────────────────────────────────────
+  ✅ VERIFICACIONES PASADAS
+───────────────────────────────────────────────────────────────
+
+1. ✅ JSON sintácticamente válido
+   - Node.js puede parsear el archivo sin errores
+   - 3 rutas configuradas: /api/auth, /api/core, /api/bff
+
+2. ✅ pathRewrite configurado correctamente
+   Simulación:
+   /api/auth/security/authenticate
+     → http://192.168.3.30:2000/security/authenticate
+   
+   /api/core/factura-manager/list
+     → http://192.168.3.30:2001/factura-manager/list
+   
+   /api/bff/facturas/marketplace
+     → http://192.168.3.30:2002/facturas/marketplace
+
+3. ✅ Build de Angular exitoso
+   npm run build: Application bundle generation complete
+   Output: 518.22 kB (warnings de budget son informativos)
+
+4. ✅ Backends accesibles desde PC-Dev
+   - ms-auth (2000): HTTP 400 (validación funciona)
+   - ms-core (2001): HTTP 404 (servicio responde)
+   - BFF (2002): HTTP 404 (servicio responde)
+
+5. ✅ Prueba end-to-end del proxy
+   curl http://localhost:4200/api/auth/security/authenticate
+   Respuesta: {"status":400,"message":"La contraseña es obligatoria"}
+   
+   ✓ Petición pasó por el proxy de Angular
+   ✓ pathRewrite funcionó (eliminó /api/auth)
+   ✓ Backend respondió correctamente
+   ✓ Sin errores de CORS
+
+───────────────────────────────────────────────────────────────
+  📊 CONFIGURACIÓN FINAL
+───────────────────────────────────────────────────────────────
+
+{
+  "/api/auth": {
+    "target": "http://192.168.3.30:2000",
+    "pathRewrite": { "^/api/auth": "" }
+  },
+  "/api/core": {
+    "target": "http://192.168.3.30:2001",
+    "pathRewrite": { "^/api/core": "" }
+  },
+  "/api/bff": {
+    "target": "http://192.168.3.30:2002",
+    "pathRewrite": { "^/api/bff": "" }
+  }
+}
+
+Opciones comunes:
+- secure: false (permite HTTP)
+- changeOrigin: true (evita CORS)
+- logLevel: debug (troubleshooting)
+
+───────────────────────────────────────────────────────────────
+  🚀 USO
+───────────────────────────────────────────────────────────────
+
+npm start
+  → Levanta en localhost:4200 con proxy automático
+
+npm run start:no-proxy
+  → Sin proxy (causará CORS - solo debugging)
+
+───────────────────────────────────────────────────────────────
+  ✅ ESTADO: VERIFICADO Y FUNCIONAL
+───────────────────────────────────────────────────────────────

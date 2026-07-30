@@ -3,12 +3,27 @@
     "target": "http://192.168.3.30:2000",
     "secure": false,
     "changeOrigin": true,
-    "logLevel": "debug"
+    "logLevel": "debug",
+    "pathRewrite": {
+      "^/api/auth": ""
+    }
   },
   "/api/core": {
     "target": "http://192.168.3.30:2001",
     "secure": false,
     "changeOrigin": true,
-    "logLevel": "debug"
+    "logLevel": "debug",
+    "pathRewrite": {
+      "^/api/core": ""
+    }
+  },
+  "/api/bff": {
+    "target": "http://192.168.3.30:2002",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "pathRewrite": {
+      "^/api/bff": ""
+    }
   }
 }

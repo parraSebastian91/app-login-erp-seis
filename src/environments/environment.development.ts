@@ -1,27 +1,35 @@
 export const environment = {
     nameApp: 'Flowis',
     BFF: '/api/bff',
-    msAuth: '/api/auth/security',
-    // Ruta de login relativa al origen servido por Kong
+    msAuth: '/api/auth',
     appLogin: '/pages/login',
+
     /**
-     * Construye una URL absoluta usando window.__env (runtime) o localhost:8000 como fallback.
-     * Requiere que index.html cargue assets/env-config.js con window.__env seteado.
-     * Solo necesario cuando la URL debe salir del dominio actual (ej: redirecciones cross-origin).
+     * URL base de Kong inyectada en runtime via window.__env.API_BASE_URL (desde entrypoint.sh).
+     * Ejemplo: http://192.168.3.10:8000
+     * Sin env.js ó en desarrollo local: fallback a localhost:8000.
      */
-    getEndpoint(path = ''): string {
+    getBaseUrl(): string {
+        const injected = (window as any).__env?.API_BASE_URL;
+        if (injected) return injected.replace(/\/$/, '');
         const protocol = (window as any).__env?.HOST_PROTOCOL || 'http';
-        const host = (window as any).__env?.HOST_LAN_IP;
-        const port = (window as any).__env?.KONG_PROXY_PORT;
-        const base = `${protocol}://${host}:${port}`;
+        const host     = (window as any).__env?.HOST_LAN_IP    || '192.168.3.30';
+        const port     = (window as any).__env?.PROXY_PORT || '8000';
+        return `${protocol}://${host}:${port}`;
+    },
+
+    getEndpoint(path = ''): string {
+        const base = environment.getBaseUrl();
         if (!path) return base;
         return `${base}/${path.replace(/^\//, '')}`;
     },
-    getBaseUrl(): string {
-        const protocol = (window as any).__env?.HOST_PROTOCOL || 'http';
-        const host = (window as any).__env?.HOST_LAN_IP;
-        const port = (window as any).__env?.KONG_PROXY_PORT;
-        return `${protocol}://${host}:${port}`;
+
+    /** URL del Portal a la que redirige tras login exitoso (inyectada desde PORTAL_URL) */
+    get portalUrl(): string {
+        return (window as any).__env?.PORTAL_URL
+            || `${environment.getBaseUrl()}/portal`;
     },
+
     enableDevLogs: false
 };
+
