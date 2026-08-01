@@ -72,6 +72,17 @@
                   "with": "src/environments/environment.development.ts"
                 }
               ]
+            },
+            "localhost": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.localhost.ts"
+                }
+              ]
             }
           },
           "defaultConfiguration": "production"
@@ -84,6 +95,9 @@
             },
             "development": {
               "buildTarget": "app-login-erp-seis:build:development"
+            },
+            "localhost": {
+              "buildTarget": "app-login-erp-seis:build:localhost"
             }
           },
           "defaultConfiguration": "development"

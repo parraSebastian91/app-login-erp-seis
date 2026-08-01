@@ -66,9 +66,9 @@ export class AuthService {
       CorrelationId,
     };
 
-    const base = environment.getBaseUrl();
+    const url = environment.getEndpoint(`${environment.msAuth}/security/authenticate`);
     const res = await firstValueFrom(
-      this.http.post<AuthenticateResponse>(`${base}/api/auth/security/authenticate`, authorizeBody)
+      this.http.post<AuthenticateResponse>(url, authorizeBody)
     );
 
     const code = res.data?.[0]?.code;
@@ -86,8 +86,8 @@ export class AuthService {
   }
 
   async validateEmail(correo: string): Promise<any> {
-    const base = environment.getBaseUrl();
-    const requestChangePAssword = this.http.post<any>(`${base}/api/auth/security/password-reset/request`, { correo });
+    const url = environment.getEndpoint(`${environment.msAuth}/security/password-reset/request`);
+    const requestChangePAssword = this.http.post<any>(url, { correo });
     try {
       const res = await firstValueFrom(requestChangePAssword);
       console.log(res);
@@ -101,8 +101,8 @@ export class AuthService {
   }
 
   async resetPassword(body: any): Promise<any> {
-    const base = environment.getBaseUrl();
-    const resetPasswordRequest = this.http.post<any>(`${base}/api/auth/security/password-reset/reset`, body);
+    const url = environment.getEndpoint(`${environment.msAuth}/security/password-reset/reset`);
+    const resetPasswordRequest = this.http.post<any>(url, body);
     try {
       const res = await firstValueFrom(resetPasswordRequest);
       console.log(res);
@@ -115,9 +115,9 @@ export class AuthService {
   }
 
   async validateToken(token: string, sessionId: string): Promise<any> {
-    const base = environment.getBaseUrl();
+    const url = environment.getEndpoint(`${environment.msAuth}/security/password-reset/validate?token=${encodeURIComponent(token)}&uuid=${encodeURIComponent(sessionId)}`);
     try {
-      const validateTokenRequest = this.http.get<any>(`${base}/api/auth/security/password-reset/validate?token=${encodeURIComponent(token)}&uuid=${encodeURIComponent(sessionId)}`);
+      const validateTokenRequest = this.http.get<any>(url);
       const res = await firstValueFrom(validateTokenRequest);
       console.log(res);
       return res;
