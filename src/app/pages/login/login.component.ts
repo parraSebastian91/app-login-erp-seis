@@ -76,6 +76,8 @@ export class LoginComponent implements OnInit {
 
       if (httpErr.status === 401 || httpErr.status === 403) {
         this.errorMsg = 'Nombre de usuario o contraseña incorrectos.';
+      } else if (httpErr.status === 429) {
+        this.errorMsg = 'Demasiados intentos. Espera unos minutos e inténtalo de nuevo.';
       } else if (httpErr.status === 0) {
         this.errorMsg = 'No se pudo conectar. Verifica tu conexión e intenta nuevamente.';
       } else if (httpErr.status >= 500) {
