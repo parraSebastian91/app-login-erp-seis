@@ -66,7 +66,7 @@ export class AuthService {
       CorrelationId,
     };
 
-    const url = environment.getEndpoint(`${environment.msAuth}/security/authenticate`);
+    const url = environment.getEndpoint(`${environment.msAuth}/security/authorize`);
     const res = await firstValueFrom(
       this.http.post<AuthenticateResponse>(url, authorizeBody)
     );
